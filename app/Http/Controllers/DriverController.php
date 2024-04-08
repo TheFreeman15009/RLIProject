@@ -19,7 +19,8 @@ class DriverController extends StandingsController
 
     public function viewusers()
     {
-        return view('admin.viewusers')->with('user', User::all());
+        $users = User::select('id', 'name', 'avatar', 'updated_at')->get()->sortByDesc('updated_at');
+        return view('admin.viewusers')->with('user', $users);
     }
     public function viewdetails(User $user)
     {

@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Indian Racing Community 👋</h1>
 
-[![Version](https://img.shields.io/badge/Version-5.1.2-blue.svg)](https://github.com/indianracingcommunity/RLIProject/releases/latest)
+[![Version](https://img.shields.io/badge/Version-5.1.3-blue.svg)](https://github.com/indianracingcommunity/RLIProject/releases/latest)
 [![Maintained: Yes](https://img.shields.io/badge/Maintained%3F-Yes-green.svg)](https://github.com/indianracingcommunity/RLIProject/graphs/contributors)
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](./license.md)
 
