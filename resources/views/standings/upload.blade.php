@@ -61,6 +61,56 @@
         outline: none !important;
         border: none !important;
     }
+
+    #raceNumber::-webkit-outer-spin-button,
+    #raceNumber::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    #raceNumber {
+        appearance: textfield;
+        -moz-appearance: textfield;
+    }
+
+    input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1rem;
+    height: 1rem;
+    border: 0.125rem solid currentColor;
+    border-radius: 0.2rem;
+
+    display: grid;
+    place-content: center;
+  }
+
+  input[type="checkbox"]::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1rem 1rem white;
+    /* box-shadow: inset 1rem 1rem blue; */
+    border-radius: 0.1rem;
+    background-color: CanvasText;
+    
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  input[type="checkbox"]:checked::before {
+    transform: scale(1);
+  }
+
+  input[type="checkbox"]:checked {
+    background-color: blue;
+    border-color: blue;
+  }
 </style>
 
 <!-- Screen to show various JSON selection methods for upload -->
@@ -91,29 +141,29 @@
     <p class="mt-5 text-4xl font-bold">Choose a starting point</p>
     <hr>
 
-    <div class="flex flex-row mt-10 mb-8 justify-center gap-10">
+    <div class="flex flex-col my-8 justify-center gap-8">
         <!-- Upload an existing valid JSON -->
-        <div class="flex flex-col align-items justify-center border-solid border-4 border-purple-500 py-32 px-24 rounded-md w-1/2">
-            <p class="text-3xl font-semibold mb-3 text-gray-500">Edit a new valid JSON</p>
+        <div class="flex flex-row items-center justify-between border-solid border-4 border-purple-500 px-10 py-8 rounded-md">
+            <p class="text-3xl font-semibold text-gray-500">Edit a new valid JSON</p>
             <input id="fileInput" type="file" class="hidden"/>
-            <label id="fileInputLabel" for="fileInput" class="text-center bg-purple-500 hover:bg-purple-700 text-white font-semibold py-2 px-4 border border-purple-700 rounded cursor-pointer">Upload JSON</label>
+            <label id="fileInputLabel" for="fileInput" class="w-40 text-center bg-purple-500 hover:bg-purple-700 text-white font-semibold py-2 px-4 border border-purple-700 rounded cursor-pointer">Upload JSON</label>
         </div>
 
         <!-- Import an uploaded race JSON -->
-        <div class="flex flex-col align-items justify-end border-solid border-4 border-red-500 py-32 px-24 rounded-md w-1/2">
-            <p class="text-3xl font-semibold mb-4 text-gray-500">Import uploaded race result</p>
-            <div class="flex flex-row gap-2 mb-1">
-                <p class="text-xl text-gray-700 font-semibold">Enter race id: </p>
-                <input class="w-16 text-lg text-center font-semibold" type="number" id="raceNumber" min="1" value="1"/>
+        <div class="flex flex-row items-center justify-between border-solid border-4 border-red-500 px-10 py-8 rounded-md">
+            <p class="text-3xl font-semibold text-gray-500">Import uploaded race result</p>
+            <div class="flex flex-row items-center justify-center">
+                <p class="text-xl text-center font-semibold bg-red-400 px-3 py-1 rounded-l">Race ID </p>
+                <input class="w-20 text-gray-800 text-lg text-center font-semibold border-2 py-1 border-red-400 rounded-r" type="number" id="raceNumber" min="1" value="1"/>
             </div>
-            <button id="importRace" class="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 border border-red-700 rounded">Import JSON</button>
+            <button id="importRace" class="w-40 bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 border border-red-700 rounded">Import JSON</button>
         </div>
-    </div>
-    
-    <!-- Start from an empty JSON -->
-    <div class="flex flex-row align-items justify-center gap-3">
-        <p class="text-2xl font-semibold text-gray-500">Don't have a reference point?</p>
-        <button id="scratch" class="px-2 bg-orange-500 hover:bg-orange-700 text-white font-semibold border rounded">Start from scratch</button>
+
+        <!-- Start from an empty JSON -->
+        <div class="flex flex-row items-center justify-between border-solid border-4 border-orange-500 px-10 py-8 rounded-md">
+            <p class="text-3xl font-semibold text-gray-500">Don't have a reference point?</p>
+            <button id="scratch" class="w-40 bg-orange-500 hover:bg-orange-700 text-white font-semibold py-2 px-4 border border-orange-700 rounded">Empty JSON</button>
+        </div>
     </div>
 
     <div class="flex flex-row align-items justify-center mt-6">
@@ -124,17 +174,17 @@
     </div>
    
     <div id="moreOptionsContent" class="flex flex-row align-items justify-center mt-3 gap-5">
-        <div class="flex flex-row gap-2">
+        <div class="flex flex-row items-center justify-center gap-2">
             <input class="cursor-pointer" type="checkbox" id="noPointsForFlCheck" />
             <label class="cursor-pointer" for="noPointsForFlCheck">No points for fastest lap</label>
         </div>
 
-        <div class="flex flex-row gap-2">
+        <div class="flex flex-row items-center justify-center gap-2">
             <input class="cursor-pointer" type="checkbox" id="bypassConstructorsCheck" />
             <label class="cursor-pointer" for="bypassConstructorsCheck">Populate all constructors in dropdowns</label>
         </div>
 
-        <div class="flex flex-row gap-2">
+        <div class="flex flex-row items-center justify-center gap-2">
             <input class="cursor-pointer" type="checkbox" id="uploadPartialResult" />
             <label class="cursor-pointer" for="uploadPartialResult">Upload partial result</label>
         </div>
@@ -3621,7 +3671,7 @@
             },
             error: function (result, status) {
                 $('#errorIncorrectRaceIDAlert').html(`<p><strong>Race ID ${raceNumber}</strong> is not present in database</p>`);
-                $('#importRace').html('Import uploaded race result');
+                $('#importRace').html('Import JSON');
                 $('#errorIncorrectRaceIDAlert').slideDown(500);
             }
         });
