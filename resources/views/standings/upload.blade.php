@@ -133,6 +133,11 @@
             <input class="cursor-pointer" type="checkbox" id="bypassConstructorsCheck" />
             <label class="cursor-pointer" for="bypassConstructorsCheck">Populate all constructors in dropdowns</label>
         </div>
+
+        <div class="flex flex-row gap-2">
+            <input class="cursor-pointer" type="checkbox" id="uploadPartialResult" />
+            <label class="cursor-pointer" for="uploadPartialResult">Upload partial result</label>
+        </div>
     </div>
 
 </div>
@@ -160,6 +165,11 @@
         <p class="text-sm text-yellow-600 font-bold">Selected options:</p>
         <p id="showNoFlPointsInfo" class="text-sm text-gray-600 font-bold">• No points for fastest lap</p>
         <p id="showPopulateAllConstructorsInfo" class="text-sm text-gray-600 font-bold">• Populate all constructors in dropdowns</p>
+        <p id="showUploadPartialResultInfo" class="text-sm text-gray-600 font-bold">• Upload partial result</p>
+    </div>
+
+    <div id="infoFullEditNotSupported" class="hidden w-1/3 bg-blue-100 border-l-4 text-sm border-blue-500 text-blue-700 py-1 px-3 mt-2 rounded" role="alert">
+        <p>Full edit is <strong>not supported</strong> for partial result upload</p>
     </div>
     
     <div class="w-7/12 rounded mb-10 my-2">
@@ -462,6 +472,7 @@
         $('#showAdditionsInfoDiv').addClass('hidden');
         $('#showNoFlPointsInfo').addClass('hidden');
         $('#showPopulateAllConstructorsInfo').addClass('hidden');
+        $('#showUploadPartialResultInfo').addClass('hidden');
         
         $('#fileInput').change(function(event) {
             // Continue operation only when a file is uploaded
@@ -479,7 +490,7 @@
                         viewJSONData(json, season, points, tracks, constructor, driver, status);
                         
                         disableNumberInputsAndAddMoreBtns();
-                        enableEditOnErrorAfterLoading(json);
+                        enableEditOnErrorAfterLoading(json, $('#uploadPartialResult').is(':checked'));
                     }
                 });
                 // Resetting the value to read the same file again
@@ -529,7 +540,7 @@
             viewJSONData(json, season, points, tracks, constructor, driver, status, isResultImportedOrFromScratch);
 
             disableNumberInputsAndAddMoreBtns();
-            enableEditOnErrorAfterLoading(json);
+            enableEditOnErrorAfterLoading(json, $('#uploadPartialResult').is(':checked'));
         });
 
         $('.homeBtn').click(function(event) {
@@ -577,38 +588,42 @@
 
     function isAllPositionKeysPresentAndValidWithoutDuplicates(resultsArray) {
         let allKeysPresentAndValidWithoutDuplicate;
+        let isJSONPartial = $('#uploadPartialResult').is(':checked');
+
         let positionStore = [];
 
         $('#positionKeyErrorAlert').slideUp(500);
         
-        for(let i = 0; i < resultsArray.length; i++) {
-            let pos = resultsArray[i].position;
-            let isFraction = pos % 1;
-
-            if(!resultsArray[i].hasOwnProperty('position')) {
-                $('#positionKeyErrorAlert').html(
-                    `<p><strong>Position Key</strong> [position] is missing at index <strong>${i}</strong> of the 'results' array</p>`
-                );
-                $('#positionKeyErrorAlert').slideDown(500);
-
-                return allKeysPresentAndValidWithoutDuplicate = 0;
-            } else if((isNaN(pos)) || (pos < 1) || (pos > resultsArray.length) || (isFraction != 0)) {
-                $('#positionKeyErrorAlert').html(
-                    `<p><strong>Position Key</strong> [position] value at index <strong>${i}</strong> should be a positive integer less than the length of the 'results' array</p>`
-                );
-                $('#positionKeyErrorAlert').slideDown(500);
-
-                return allKeysPresentAndValidWithoutDuplicate = 0;
-            } else if(positionStore.includes(pos)) {
-                $('#positionKeyErrorAlert').html(
-                    `<p><strong>Position Key</strong> [position] value at index <strong>${i}</strong> is a duplicate value</p>`
-                );
-                $('#positionKeyErrorAlert').slideDown(500);
-
-                return allKeysPresentAndValidWithoutDuplicate = 0;
+        if(!isJSONPartial) {
+            for(let i = 0; i < resultsArray.length; i++) {
+                let pos = resultsArray[i].position;
+                let isFraction = pos % 1;
+    
+                if(!resultsArray[i].hasOwnProperty('position')) {
+                    $('#positionKeyErrorAlert').html(
+                        `<p><strong>Position Key</strong> [position] is missing at index <strong>${i}</strong> of the 'results' array</p>`
+                    );
+                    $('#positionKeyErrorAlert').slideDown(500);
+    
+                    return allKeysPresentAndValidWithoutDuplicate = 0;
+                } else if((isNaN(pos)) || (pos < 1) || (pos > resultsArray.length) || (isFraction != 0)) {
+                    $('#positionKeyErrorAlert').html(
+                        `<p><strong>Position Key</strong> [position] value at index <strong>${i}</strong> should be a positive integer less than the length of the 'results' array</p>`
+                    );
+                    $('#positionKeyErrorAlert').slideDown(500);
+    
+                    return allKeysPresentAndValidWithoutDuplicate = 0;
+                } else if(positionStore.includes(pos)) {
+                    $('#positionKeyErrorAlert').html(
+                        `<p><strong>Position Key</strong> [position] value at index <strong>${i}</strong> is a duplicate value</p>`
+                    );
+                    $('#positionKeyErrorAlert').slideDown(500);
+    
+                    return allKeysPresentAndValidWithoutDuplicate = 0;
+                }
+    
+                positionStore.push(pos);
             }
-
-            positionStore.push(pos);
         }
 
         return allKeysPresentAndValidWithoutDuplicate = 1;
@@ -663,6 +678,7 @@
             additionalResultsPointsToAdd: [],
             isNoPointsForFastestLap: $('#noPointsForFlCheck').is(':checked'),
             isShowAllConstructorsChecked: $('#bypassConstructorsCheck').is(':checked'),
+            isUploadPartialResultChecked: $('#uploadPartialResult').is(':checked'),
             isPointsUndefined: points.find(item => {return item.id === json.track.points}) === undefined ? true : false,
             isResultImported: {
                 currentVal: isResultImportedOrFromScratch, 
@@ -709,6 +725,16 @@
             $('#showPopulateAllConstructorsInfo').removeClass('hidden');
         }
 
+        if(supportingVariables.isUploadPartialResultChecked) {
+            $('#showAdditionsInfoDiv').removeClass('hidden');
+            $('#showUploadPartialResultInfo').removeClass('hidden');
+
+            $('#toggleControlsBtn').removeClass('bg-blue-500 hover:bg-blue-700 border-blue-700');
+            $('#toggleControlsBtn').addClass('bg-gray-500 border-gray-700 cursor-not-allowed');
+
+            $('#infoFullEditNotSupported').slideDown(500);
+        }
+
         // Printing values of track key of json in table
         $('#trackTableHeaders').removeClass('hidden');
         updateTrackTable(json, season, tracks, points);
@@ -717,29 +743,60 @@
         $('#resultsTableHeaders').removeClass('hidden');
         updateResultsTable(json, points, driver, status, additionalDetailsStore, supportingVariables);
 
-        // To enable normal function of 'edit' btn after import
-        if(supportingVariables.isResultImported.currentVal === 1) {
-            supportingVariables.isResultImported.currentVal = 0;
-        }
-
-        // Switch race time format to 'interval' on load when starting from scratch
-        if(supportingVariables.isResultImported.originalVal === -1) {
-            $('#raceTimeFormatText').html('[Interval]');
-            
-            for(let i = 0; i < json.results.length; i++) {
-                if((supportingVariables.indexPosMap[i] - 1) > 0) {
-                    $(`#errorTimeAlert${i}`).html(
-                        `<p>Row<strong> ${i+1}</strong> -<strong> RACE TIME</strong> [field must be in one of the following formats:<strong> '-'</strong>, <strong>'1:06.006'</strong>, <strong>'±10.324'</strong>, <strong>'±1:06.006'</strong>, <strong>+X Lap(s)</strong>, <strong>DNS</strong>, <strong>DNF</strong> or <strong>DSQ</strong>]</p>`
-                    );
+        if(!supportingVariables.isUploadPartialResultChecked) {
+            // To enable normal function of 'edit' btn after import
+            if(supportingVariables.isResultImported.currentVal === 1) {
+                supportingVariables.isResultImported.currentVal = 0;
+            }
+    
+            // Switch race time format to 'interval' on load when starting from scratch
+            if(supportingVariables.isResultImported.originalVal === -1) {
+                $('#raceTimeFormatText').html('[Interval]');
+                
+                for(let i = 0; i < json.results.length; i++) {
+                    if((supportingVariables.indexPosMap[i] - 1) > 0) {
+                        $(`#errorTimeAlert${i}`).html(
+                            `<p>Row<strong> ${i+1}</strong> -<strong> RACE TIME</strong> [field must be in one of the following formats:<strong> '-'</strong>, <strong>'1:06.006'</strong>, <strong>'±10.324'</strong>, <strong>'±1:06.006'</strong>, <strong>+X Lap(s)</strong>, <strong>DNS</strong>, <strong>DNF</strong> or <strong>DSQ</strong>]</p>`
+                        );
+                    }
                 }
+    
+                $('.raceTimeCol').removeClass('absoluteTime');
+                $('#raceTimeFormatToggleBtn').html('Show Absolute Times');
             }
 
-            $('.raceTimeCol').removeClass('absoluteTime');
-            $('#raceTimeFormatToggleBtn').html('Show Absolute Times');
-        }
+            openResultsMoreDetailsOverlay(json, additionalDetailsStore, supportingVariables);
 
+            checkIfDriverNameIsExactMatch(jsonResultsDetailsStore, supportingVariables);
+            checkDuplicateDiD(jsonResultsDetailsStore, supportingVariables);
+            checkDuplicateStatus(jsonResultsDetailsStore, supportingVariables);
+            
+            for(let i = 0; i < json.results.length; i++) {            
+                // Validate values in all 'results' table cells based on set rules
+                checkAndMonitorResultsData(json, points, driver, supportingVariables.availableConstructors, status, regexValidationStrings, jsonTrackDetailsStore, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, i);
+                
+                serialiseRowReorderControls(jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, i);
+            }
+            
+            checkDuplicateGrid(jsonResultsDetailsStore, supportingVariables);
+            checkGridValueGreaterThanArraySize(jsonResultsDetailsStore, supportingVariables);
+            checkGridValuesStartWith1(jsonResultsDetailsStore, supportingVariables);
+            checkGridValuesForBreakInSequence(jsonResultsDetailsStore, supportingVariables);
+            isAllGridValues0(jsonResultsDetailsStore, supportingVariables);
+            isFastestLapPresentAndMatchingWithStatus(json, regexValidationStrings, jsonResultsDetailsStore, supportingVariables);
+    
+            addEventListenerToTrackUndoBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
+            
+            for(let i = 0; i < json.results.length; i++) {
+                addEventListenerToResultsUndoBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, i);
+            }
+            
+            addEventListenerOnAddNewRowBtn(json, season, points, driver, status, regexValidationStrings, jsonTrackDetailsStore, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
+            
+            addEventListenerOnRemoveLastRowBtn(json, points, driver, regexValidationStrings, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
+        }
+        
         openTrackMoreDetailsOverlay(additionalDetailsStore);
-        openResultsMoreDetailsOverlay(json, additionalDetailsStore, supportingVariables);
         
         $('#attributeValue').change(function(event) {
             editMoreDetails(additionalDetailsStore, supportingVariables);
@@ -748,23 +805,9 @@
         // Validate values in all 'track' table cells based on set rules
         checkAndMonitorTrackData(json, season, tracks, points, constructor, regexValidationStrings, jsonTrackDetailsStore, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
         
-        checkIfDriverNameIsExactMatch(jsonResultsDetailsStore, supportingVariables);
-        checkDuplicateDiD(jsonResultsDetailsStore, supportingVariables);
-        checkDuplicateStatus(jsonResultsDetailsStore, supportingVariables);
+        checkAllTableValuesForErrors(json, regexValidationStrings, jsonResultsDetailsStore, supportingVariables);
         
-        for(let i = 0; i < json.results.length; i++) {            
-            // Validate values in all 'results' table cells based on set rules
-            checkAndMonitorResultsData(json, points, driver, supportingVariables.availableConstructors, status, regexValidationStrings, jsonTrackDetailsStore, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, i);
-            
-            serialiseRowReorderControls(jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, i);
-        }
-        
-        checkDuplicateGrid(jsonResultsDetailsStore, supportingVariables);
-        checkGridValueGreaterThanArraySize(jsonResultsDetailsStore, supportingVariables);
-        checkGridValuesStartWith1(jsonResultsDetailsStore, supportingVariables);
-        checkGridValuesForBreakInSequence(jsonResultsDetailsStore, supportingVariables);
-        isAllGridValues0(jsonResultsDetailsStore, supportingVariables);
-        isFastestLapPresentAndMatchingWithStatus(json, regexValidationStrings, jsonResultsDetailsStore, supportingVariables);
+        addEventListenerToAllToggleBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
 
         $('#startOver').click(function(event) {
             let choice = window.confirm('Are you sure you want to start over?')
@@ -784,23 +827,9 @@
             $('#reviewJSONOverlay').addClass('hidden');
         });
 
-        addEventListenerToAllToggleBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
-
-        addEventListenerToTrackUndoBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
-        
-        for(let i = 0; i < json.results.length; i++) {
-            addEventListenerToResultsUndoBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, i);
-        }
-
-        addEventListenerOnAddNewRowBtn(json, season, points, driver, status, regexValidationStrings, jsonTrackDetailsStore, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
-        
-        addEventListenerOnRemoveLastRowBtn(json, points, driver, regexValidationStrings, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
-
         $('#reviewJSON').toggleClass('hidden');
         $('#submitJSON').toggleClass('hidden');
-        
-        checkAllTableValuesForErrors(json, regexValidationStrings, jsonResultsDetailsStore, supportingVariables);
-        
+
         $('#reviewJSON').click(function(event) {
             let newJson = updateJSONFromTableValues(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables, 1);
 
@@ -932,7 +961,7 @@
         let rowTrack = `<tr class="text-center">
                             <td class="border rounded py-2 px-1" id="trackBodySeason">
                                 <div class="flex px-2 justify-center gap-2">
-                                    <select id="seasonSelect" class="bg-gray-200 p-1 font-semibold leading-tight border border-gray-500 rounded hover:border-purple-600 hover:bg-purple-100 focus:outline-none focus:bg-white focus:border-gray-500 cursor-not-allowed selectInp" disabled>                    
+                                    <select id="seasonSelect" class="bg-gray-200 p-1 font-semibold leading-tight border border-gray-500 rounded hover:border-purple-600 hover:bg-purple-100 focus:outline-none focus:bg-white focus:border-gray-500 cursor-not-allowed selectInp trackSelectInp" disabled>                    
                                     </select>
                                     <button id="undoSeason" class="hidden bg-white text-sm hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded undo">
                                         <i class="fa fa-undo" aria-hidden="true"></i>
@@ -941,7 +970,7 @@
                             </td>
                             <td class="border rounded p-2" id="trackBodyRound">
                                 <div class="flex px-2 justify-center gap-1">
-                                    <input class="pl-6 w-16 text-center font-semibold numInp" type="number" id="inputRound" min="1" value="${json.track.round}"\>
+                                    <input class="pl-6 w-16 text-center font-semibold numInp trackNumInp" type="number" id="inputRound" min="1" value="${json.track.round}"\>
                                     <button id="undoRound" class="hidden bg-white text-sm hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded undo">
                                         <i class="fa fa-undo" aria-hidden="true"></i>
                                     </button>
@@ -949,7 +978,7 @@
                             </td>
                             <td class="border rounded py-2 px-1" id="trackBodyCircuit">
                                 <div class="flex px-2 justify-center gap-2">
-                                    <select id="tracksSelect" class="bg-gray-200 w-48 p-1 font-semibold leading-tight border border-gray-500 rounded hover:border-purple-600 hover:bg-purple-100 focus:outline-none focus:bg-white focus:border-gray-500 cursor-not-allowed selectInp" disabled>                       
+                                    <select id="tracksSelect" class="bg-gray-200 w-48 p-1 font-semibold leading-tight border border-gray-500 rounded hover:border-purple-600 hover:bg-purple-100 focus:outline-none focus:bg-white focus:border-gray-500 cursor-not-allowed selectInp trackSelectInp" disabled>                       
                                     </select>
                                     <button id="undoCircuit" class="hidden bg-white text-sm hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded undo">
                                         <i class="fa fa-undo" aria-hidden="true"></i>
@@ -958,7 +987,7 @@
                             </td>
                             <td class="border rounded py-2 px-1" id="trackBodyPoints">
                                 <div class="flex px-2 justify-center gap-2">
-                                    <button id="pointsBtn" type="button" class="px-5 font-semibold bg-gray-300 border border-gray-500 rounded cursor-not-allowed selectInp" disabled>${json.track.points}</button>
+                                    <button id="pointsBtn" type="button" class="px-5 font-semibold bg-gray-300 border border-gray-500 rounded cursor-not-allowed selectInp trackSelectInp" disabled>${json.track.points}</button>
                                     <button id="undoPoints" class="hidden bg-white text-sm hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded undo">
                                         <i class="fa fa-undo" aria-hidden="true"></i>
                                     </button>
@@ -1050,7 +1079,7 @@
                                         <button id="moveRowDown${i}" class="hidden bg-red-500 hover:bg-red-700 text-white font-semibold px-1 border border-red-700 rounded rowReorderBtn">
                                             <i class="text-sm fa fa-arrow-down"></i>
                                         </button>
-                                        <input class="pl-6 w-16 text-center font-semibold numInp inputPos bg-white" type="number" id="inputPos${i}" min="1" value="${i + 1}" disabled\>
+                                        <input class="pl-6 w-16 text-center font-semibold numInp inputPos bg-white" type="number" id="inputPos${i}" min="1" value="${json.results[i].position}" disabled\>
                                     </div>
                                 </td>
                                 <td class="border rounded py-2 px-1" id="resultsBodyDriver${i}">
@@ -2883,13 +2912,13 @@
     }
 
     function addEventListenerToAllToggleBtns(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables) {
-        addEventListenerToToggleControlsBtn();
+        if(!supportingVariables.isUploadPartialResultChecked) {
+            addEventListenerToToggleControlsBtn();
+            addEventListenerToUndoToggleBtn();
+            addEventListenerToRowReorderBtn(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
+        }
 
         addEventListenerToRaceTimeFormatBtn(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
-        
-        addEventListenerToUndoToggleBtn();
-        
-        addEventListenerToRowReorderBtn(json, jsonResultsDetailsStore, additionalDetailsStore, supportingVariables);
     }
 
     function addEventListenerToToggleControlsBtn() {
@@ -3526,7 +3555,7 @@
         $('#addMoreTrack').addClass('cursor-not-allowed');
     }
 
-    function enableEditOnErrorAfterLoading(json) {
+    function enableEditOnErrorAfterLoading(json, isUploadPartialResultChecked) {
         let postStatus = {
             track: 1,
             results: 1
@@ -3539,25 +3568,36 @@
             $('#toggleControlsBtn').addClass('bg-green-500 hover:bg-green-700 border-green-700');
             $('#toggleControlsBtn').addClass('editing');
 
-            $('.selectInp').attr('disabled', false);
-            $('.selectInp').addClass('open');
-            $('.selectInp').removeClass('cursor-not-allowed');
-            $('.numInp').removeClass('disable');
-            $('.numInp').removeClass('cursor-not-allowed');
-            $('.addMoreBtn').removeClass('disable');
-            $('.addMoreBtn').removeClass('cursor-not-allowed');
+            if(!isUploadPartialResultChecked) {
+                $('.selectInp').attr('disabled', false);
+                $('.selectInp').addClass('open');
+                $('.selectInp').removeClass('cursor-not-allowed');
+                $('.numInp').removeClass('disable');
+                $('.numInp').removeClass('cursor-not-allowed');
+                $('.addMoreBtn').removeClass('disable');
+                $('.addMoreBtn').removeClass('cursor-not-allowed');
+                
+                $('#undoToggleBtn').removeClass('hidden');
+                $('#rowReorderToggleBtn').removeClass('hidden');
+                
+                $('#addRemoveRowControls').removeClass('hidden');
+                
+                if(json.results.length === 1) {
+                    $('#removeRow').removeClass('hover:bg-red-700');
+                    $('#removeRow').addClass('opacity-50 cursor-not-allowed');
+                }
+            }
+            else {
+
+                $('.trackSelectInp').attr('disabled', false);
+                $('.trackSelectInp').addClass('open');
+                $('.trackSelectInp').removeClass('cursor-not-allowed');
+                $('.trackNumInp').removeClass('cursor-not-allowed');
+                $('.trackNumInp').removeClass('disable');
+            }
+            
             $('#addMoreTrack').removeClass('disable');
             $('#addMoreTrack').removeClass('cursor-not-allowed');
-
-            $('#undoToggleBtn').removeClass('hidden');
-            $('#rowReorderToggleBtn').removeClass('hidden');
-
-            $('#addRemoveRowControls').removeClass('hidden');
-
-            if(json.results.length === 1) {
-                $('#removeRow').removeClass('hover:bg-red-700');
-                $('#removeRow').addClass('opacity-50 cursor-not-allowed');
-            }
         }
     }
 
@@ -3574,7 +3614,7 @@
                 viewJSONData(result, season, points, tracks, constructor, driver, status, isResultImportedOrFromScratch);
 
                 disableNumberInputsAndAddMoreBtns();
-                enableEditOnErrorAfterLoading(result);
+                enableEditOnErrorAfterLoading(result, $('#uploadPartialResult').is(':checked'));
             },
             error: function (result, status) {
                 $('#errorIncorrectRaceIDAlert').html(`<p><strong>Race ID ${raceNumber}</strong> is not present in database</p>`);
