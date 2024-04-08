@@ -1159,7 +1159,7 @@
                                         <div id="warningPositionClassifiedForPoints${i}" class="hidden w-3/4 bg-yellow-100 border-l-4 text-sm border-yellow-500 text-yellow-700 py-1 px-3 mb-2 rounded" role="alert">
                                         </div>
 
-                                        <div id="warningDriverNameNotExactMatch${i}" class="hidden w-3/4 bg-yellow-100 border-l-4 text-sm border-yellow-500 text-yellow-700 py-1 px-3 mb-2 rounded" role="alert">
+                                        <div id="infoDriverNameNotExactMatch${i}" class="hidden w-3/4 bg-blue-100 border-l-4 text-sm border-blue-500 text-blue-700 py-1 px-3 mb-2 rounded" role="alert">
                                         </div>
             
                                         <div id="errorPosAlert${i}" class="hidden w-3/4 bg-red-100 border-l-4 text-sm border-red-500 text-red-700 py-1 px-3 mb-2 rounded" role="alert">
@@ -1553,6 +1553,7 @@
         if(validityCheck === undefined) {
             if(!selectedValue) {
                 $(parentNode).removeClass('bg-yellow-600');
+                $(parentNode).removeClass('bg-blue-600');
                 $(parentNode).addClass('bg-red-600');
                 $(alertNode).slideDown(500);
             }
@@ -1799,15 +1800,15 @@
     function checkIfDriverNameIsExactMatch(jsonResultsDetailsStore, supportingVariables) {
         for(let i = 0; i < jsonResultsDetailsStore.aliasExactMatchKey.length; i++) {
             if(jsonResultsDetailsStore.aliasExactMatchKey[i].isPresent && jsonResultsDetailsStore.aliasExactMatchKey[i].value === false) {
-                $(`#resultsBodyDriver${i}`).addClass('bg-yellow-600');
-                $(`#warningDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).html(
+                $(`#resultsBodyDriver${i}`).addClass('bg-blue-600');
+                $(`#infoDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).html(
                     `<p>Row<strong> ${supportingVariables.indexPosMap[i]}</strong> with <strong>DRIVER</strong> name<strong> ${jsonResultsDetailsStore.driverName[i]}</strong> does not match with the names associated with ID: ${jsonResultsDetailsStore.driverID[i]}</p>`
                 );
-                $(`#warningDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).slideDown(500);
+                $(`#infoDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).slideDown(500);
             }
             else {
-                $(`#resultsBodyDriver${i}`).removeClass('bg-yellow-600');
-                $(`#warningDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).slideUp(500);
+                $(`#resultsBodyDriver${i}`).removeClass('bg-blue-600');
+                $(`#infoDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).slideUp(500);
             }
         }
     }
@@ -1837,11 +1838,12 @@
                 }
                 else {
                     $(`#resultsBodyDriver${i}`).removeClass('bg-yellow-600');
+                    $(`#resultsBodyDriver${i}`).removeClass('bg-blue-600');
                     $(`#resultsBodyDriver${i}`).addClass('bg-red-600');
                     $(`#errorDriverAlert${supportingVariables.indexPosMap[i] - 1}`).html(
                         `<p>Row<strong> ${supportingVariables.indexPosMap[i]}</strong> -<strong> DRIVER</strong> [field is a duplicate value]</p>`
                     );
-                    $(`#warningDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).slideUp(500);
+                    $(`#infoDriverNameNotExactMatch${supportingVariables.indexPosMap[i] - 1}`).slideUp(500);
                     $(`#errorDriverAlert${supportingVariables.indexPosMap[i] - 1}`).slideDown(500);
                 }
             }
@@ -2003,7 +2005,7 @@
                 selectInpNode: `#driverSelect${i}`,
                 parentNode: `#resultsBodyDriver${i}`,
                 alertNode: `#errorDriverAlert${i}`,
-                warningNode: `#warningDriverNameNotExactMatch${i}`,
+                warningNode: `#infoDriverNameNotExactMatch${i}`,
                 undoBtn: `#undoDriver${i}`
             },
             constructorID: {
@@ -2072,6 +2074,7 @@
 
         if(driverIDValidCheck === undefined) {
             $(dataToCheck.driverID.parentNode).removeClass('bg-yellow-600');
+            $(dataToCheck.driverID.parentNode).removeClass('bg-blue-600');
             $(dataToCheck.driverID.parentNode).addClass('bg-red-600');
 
             $(dataToCheck.driverID.warningNode).slideUp(500);
