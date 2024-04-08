@@ -1,4 +1,13 @@
-[v5.1.2 - RWD](https://github.com/indianracingcommunity/RLIProject/commit/03219790)
+[v5.1.3 - Admin Pages Usability Enhancements](https://github.com/indianracingcommunity/RLIProject/commit/02ac020e)
+--
+*[02ac020e](https://github.com/indianracingcommunity/RLIProject/commit/02ac020e) - `style`: 🚸 listed only signed up users for active seasons in view signups page
+*[3c877e0c](https://github.com/indianracingcommunity/RLIProject/commit/3c877e0c) - `style`: 💄 redesigned alignment of home screen for the result upload portal
+*[250d4b27](https://github.com/indianracingcommunity/RLIProject/commit/250d4b27) - `style`: 💄 changed isExactMatch detection alert and cell color to blue
+*[213f01ea](https://github.com/indianracingcommunity/RLIProject/commit/213f01ea) - `fix`: 🚸 added provision to upload partial/class results
+*[96ef7440](https://github.com/indianracingcommunity/RLIProject/commit/96ef7440) - `style`: 🚸 marked users who are not drivers & sorted users by `updated_at` in view/allot drivers page
+*[36801163](https://github.com/indianracingcommunity/RLIProject/commit/36801163) - `refactor`: 🍱 updated ACC rulebook file to v4
+
+[v5.1.2 - RWD](https://github.com/indianracingcommunity/RLIProject/commit/3bb34654)
 --
 * [03219790](https://github.com/indianracingcommunity/RLIProject/commit/03219790) - `style`: 💄 fixed column width of driver penalties of standings page for mobile screens for chrome
 * [4081f293](https://github.com/indianracingcommunity/RLIProject/commit/4081f293) - `style`: 💄 fixed the overflow of text content of ourteam page on small screens
