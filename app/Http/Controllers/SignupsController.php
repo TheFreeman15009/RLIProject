@@ -165,12 +165,24 @@ class SignupsController extends Controller
 
     public function viewsignups()
     {
-        $data = Signup::all()->load('user', 'season')->toArray();
-        $season = Season::all();
+        $activeSeasons = Season::active()->get();
+        $activeSeasonIds = $activeSeasons->pluck('id');
+        $signedUsers = Signup::whereIn('season', $activeSeasonIds)
+                      ->orderBy('updated_at', 'desc')->get()
+                      ->load('user', 'season')->toArray();
+
+        $seasonNamesWithSignups = [];
+        foreach ($signedUsers as $user) {
+            $seasonId = $user['season']['name'];
+            if (!array_key_exists($seasonId, $seasonNamesWithSignups))
+                $seasonNamesWithSignups[$seasonId] = 0;
+
+            $seasonNamesWithSignups[$seasonId]++;
+        }
 
         return view('admin.signups')
-        ->with('data', $data)
-        ->with('season', $season);
+        ->with('data', $signedUsers)
+        ->with('season', array_keys($seasonNamesWithSignups));
     }
 
     public function getSignupsApi()

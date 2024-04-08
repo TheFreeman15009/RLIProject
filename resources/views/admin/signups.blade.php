@@ -18,19 +18,15 @@
 </div>
 <script>
     var data = <?php echo json_encode($data); ?>;
-    var seasons = <?php echo json_encode($season); ?>;
+    var active_seasons = <?php echo json_encode($season); ?>;
     var tablebody = "";
     var tablehead = "<th class='px-4 py-2'>S No.</th><th class='px-4 py-2'>Name</th>";
-    var active_seasons = [];
     var eachrow = [];
     var serial_no = 0;
-    
-    for (var i=0;i<seasons.length;i++){
-        if (seasons[i].status < 2 && seasons[i].status >= 0){
-            active_seasons.push(seasons[i].name);
-            eachrow.push("<td class='border text-center px-4 py-2'> - </td>");
-            tablehead += "<th class='px-4 py-2'>" + seasons[i].name + "</th>";
-        }
+
+    for (var i = 0; i < active_seasons.length; ++i) {
+        eachrow.push("<td class='border text-center px-4 py-2'> - </td>");
+        tablehead += "<th class='px-4 py-2'>" + active_seasons[i] + "</th>";
     }
     
     document.getElementById("tableheadid").innerHTML = tablehead;
