@@ -42,4 +42,8 @@ class Report extends Model
     {
         return $this->belongsTo('App\Report', 'counter_report');
     }
+    public function counterReportAgainst()
+    {
+        return $this->hasMany('App\Report', 'counter_report');
+    }
 }

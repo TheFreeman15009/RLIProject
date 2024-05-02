@@ -32,14 +32,13 @@ class Circuit extends Model
 
         return $track;
     }
+    public function associatedSeries()
+    {
+        return $this->belongsTo('App\Series', 'series');
+    }
 
     public function races()
     {
         return $this->hasMany('App\Race');
-    }
-
-    public function series()
-    {
-        return $this->belongsTo('App\Series', 'series');
     }
 }

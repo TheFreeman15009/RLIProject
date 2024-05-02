@@ -15,6 +15,16 @@ class Series extends Model
 
     public function seasons()
     {
-        return $this->hasOne('App\Season');
+        return $this->hasMany('App\Season', 'series');
+    }
+
+    public function constructors()
+    {
+        return $this->hasMany('App\Constructor', 'series');
+    }
+
+    public function circuits()
+    {
+        return $this->hasMany('App\Circuit', 'series');
     }
 }

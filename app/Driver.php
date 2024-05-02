@@ -54,4 +54,14 @@ class Driver extends Model
     {
         return $this->hasMany('App\Result');
     }
+
+    public function myReports()
+    {
+        return $this->hasMany('App\Report', 'reporting_driver');
+    }
+
+    public function reportsAgainstMe()
+    {
+        return $this->hasMany('App\Report', 'reported_against');
+    }
 }

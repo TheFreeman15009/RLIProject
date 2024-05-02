@@ -24,6 +24,11 @@ class Constructor extends Model
         return json_decode(json_encode($team_list), true);
     }
 
+    public function associatedSeries()
+    {
+        return $this->belongsTo('App\Series', 'series');
+    }
+
     public function results()
     {
         return $this->hasMany('App\Result');

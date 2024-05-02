@@ -24,12 +24,7 @@ class Season extends Model
         'game', 'season', 'tier', 'year'
     ];
 
-    public function races()
-    {
-        return $this->hasMany('App\Race');
-    }
-
-    public function series()
+    public function associatedSeries()
     {
         return $this->belongsTo('App\Series', 'series');
     }
@@ -49,9 +44,14 @@ class Season extends Model
         return $lm;
     }
 
+    public function races()
+    {
+        return $this->hasMany('App\Race');
+    }
+
     public function signups()
     {
-        return $this->hasMany('App\Signup');
+        return $this->hasMany('App\Signup', 'season');
     }
 
     /**

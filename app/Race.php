@@ -44,7 +44,7 @@ class Race extends Model
         return $this->belongsTo('App\Circuit');
     }
 
-    public function points()
+    public function pointSystem()
     {
         return $this->belongsTo('App\Points', 'points');
     }
@@ -54,7 +54,7 @@ class Race extends Model
         return $this->hasMany('App\Result');
     }
 
-    public function report()
+    public function reports()
     {
         return $this->hasMany('App\Report');
     }

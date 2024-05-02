@@ -18,25 +18,19 @@ class User extends Authenticatable
         return $user;
     }
 
-    public function driver()
-    {
-        return $this->hasOne('App\Driver');
-    }
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-
-
     protected $fillable = [
         'name', 'email', 'password', 'discord_discrim', 'discord_id', 'avatar'
     ];
 
-    protected static $logName = 'user';  // Name for the log
-    protected static $logAttributes = ['*']; // Log All fields in the table
-    protected static $logOnlyDirty = true; // Only log the fields that have been updated
+    protected static $logName = 'user';         // Name for the log
+    protected static $logAttributes = ['*'];    // Log All fields in the table
+    protected static $logOnlyDirty = true;      // Only log the fields that have been updated
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -55,13 +49,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function drivers()
+    public function driver()
     {
         return $this->hasOne('App\Driver');
     }
 
     public function signups()
     {
-        return $this->hasOne('App\Signup');
+        return $this->hasMany('App\Signup');
     }
 }
