@@ -2,12 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\User;
+use App\Series;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Log;
-use App\Series;
-use App\User;
-use App\Role;
 
 class ExampleTest extends TestCase
 {

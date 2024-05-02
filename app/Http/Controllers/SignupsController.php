@@ -185,21 +185,23 @@ class SignupsController extends Controller
         ->with('season', array_keys($seasonNamesWithSignups));
     }
 
+    /**
+     *  Signups API - Returns active seasons with their signups
+     *  @return \Illuminate\Http\JsonResponse `[ season: {}, signups: [{}, {}, ...]]`
+     */
     public function getSignupsApi()
     {
-        $activeSeasons = Season::where('status', '<', 2)->get();
+        $activeSeasons = Season::active()->get();
         $seasonIds = $activeSeasons->pluck('id')->toArray();
         $activeSeasons = $activeSeasons->toArray();
 
         $signups = Signup::whereIn('season', $seasonIds)
-                       ->orderBy('season')
-                       ->orderBy('created_at')
-                       ->get()
-                       ->toArray();
+                         ->orderBy('season')
+                         ->orderBy('created_at')
+                         ->get()
+                         ->toArray();
 
         $res = $this->groupByField('season', 'signups', $activeSeasons, $signups, 'season');
-
-      // Returns { season: {}, signups: [{}, {}, ...] }
         return response()->json($res);
     }
 
@@ -246,5 +248,52 @@ class SignupsController extends Controller
 
       // Returns [{id, drivername, discord_id, racenumber, steam_id, attendance, car1 ...}, {...} ...]
         return response()->json($res);
+    }
+
+    // Groups By Field
+    // Example: Inputs -> ['season', 'signups', List of seasons, List of all signups, 'season']
+    // Returns [ season: {}, signups: [{}, {}, ...] ]
+    private function groupByField($fieldName, $listName, $idList, $ogList, $field, $id = "id")
+    {
+        $res = array();
+        $sList = array();
+
+        $prev = -1;
+        $cur = 0;
+
+        if (count($ogList) > 0) {
+            $prev = $ogList[0][$field];
+        }
+
+        // Group by Field
+        // Assumes ogList is sorted by field, so that it can be split by it in order
+        foreach ($ogList as $l) {
+            $cur = $l[$field];
+
+            if ($prev != $cur) {
+                $elId = array_search($prev, array_column($idList, $id));
+
+                $el = array();
+                $el[$fieldName] = $idList[$elId];
+                $el[$listName] = $sList;
+                array_push($res, $el);
+
+                $sList = array();
+            }
+
+            array_push($sList, $l);
+            $prev = $cur;
+        }
+
+        // Last element push
+        $elId = array_search($cur, array_column($idList, $id));
+
+        $el = array();
+        $el[$fieldName] = $idList[$elId];
+        $el[$listName] = $sList;
+
+        array_push($res, $el);
+
+        return $res;
     }
 }

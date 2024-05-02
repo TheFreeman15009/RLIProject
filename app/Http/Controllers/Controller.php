@@ -13,20 +13,22 @@ class Controller extends BaseController
     use DispatchesJobs;
     use ValidatesRequests;
 
-    public function convertMillisToStandard($time)
+    public function convertMillisToStandard(int $time): string
     {
-        $mtime = (int)$time;
+        $mtime = (int)abs($time);
         $seconds = round($mtime / 1000.0, 3);
         $minutes = (int)($seconds / 60);
         $seconds = round($seconds - $minutes * 60, 3);
 
-        $res = "";
+        $res = ($time < 0) ? '-' : '';
         if ($minutes > 0) {
             $res .= (string)$minutes . ":";
+
+            if ($seconds < 10) {
+                $res .= "0";
+            }
         }
-        if ($seconds < 10) {
-            $res .= "0";
-        }
+
 
         $res .= (string)$seconds;
         $tr = explode(".", $res);
@@ -44,87 +46,55 @@ class Controller extends BaseController
         return $res;
     }
 
-    public function sgnp($n)
+    public function sgnp(float $n): int
     {
         return ($n >= 0) - ($n < 0);
     }
 
-    public function convertStandardtoMillis($time)
+    public function convertStandardtoMillis(string $time): int
     {
+        $sign = 1;
+        if ($time[0] == '-') {
+            $sign = -1;
+            $time[0] = '0';
+        }
+
         $seg_time = explode(":", $time);
         $min = 0;
         $sec = 0;
-        if (count($seg_time) > 0) {
+        if (count($seg_time) > 1) {
             $min = (int)$seg_time[0];
         }
-        if (count($seg_time) > 0) {
+        if (count($seg_time) > 1) {
             $sec = (float)$seg_time[1];
         } else {
             $sec = (float)$seg_time[0];
         }
 
         $res = $min * 60 + $sec;
-        return ceil($res * 1000);
+        return $sign * ceil($res * 1000);
     }
 
-    // Sort by a key in associative array
-    public function sortByKey(&$arr, $field, $mul = 1)
+    /**
+     * Modifies input array, sorting by a key in associative array.
+     *
+     * @param array[array] $arr Input Array of associative arrays, which should contain $field as a key
+     * @param string $field Sort key
+     * @param 1|-1 $mul Sorting order. -1 for descending order.
+     */
+    public function sortByKey(array &$arr, string $field, int $mul = 1): void
     {
+        if (count($arr) == 0 || !array_key_exists($field, $arr[0]))
+            return;
+
         usort($arr, function ($a, $b) use ($field, $mul) {
-            if ($a[$field] * $mul < $b[$field] * $mul) {
+            if ($a[$field] * $mul > $b[$field] * $mul) {
                 return 1;
-            } elseif ($a[$field] * $mul > $b[$field] * $mul) {
+            } elseif ($a[$field] * $mul < $b[$field] * $mul) {
                 return -1;
             } else {
                 return 0;
             }
         });
-    }
-
-    // Groups By Field
-    // Example: Inputs -> ['season', 'signups', List of Seasons, List of All Signups, 'season']
-    // Returns { season: {}, signups: [{}, {}, ...] }
-    public function groupByField($fieldName, $listName, $idList, $ogList, $field, $id = "id")
-    {
-        $res = array();
-        $sList = array();
-
-        $prev = -1;
-        $cur = 0;
-
-        if (count($ogList) > 0) {
-            $prev = $ogList[0][$field];
-        }
-
-        // Group by Field
-        // Assumes ogList is sorted by field, so that it can be split by it in order
-        foreach ($ogList as $l) {
-            $cur = $l[$field];
-
-            if ($prev != $cur) {
-                $elId = array_search($prev, array_column($idList, $id));
-
-                $el = array();
-                $el[$fieldName] = $idList[$elId];
-                $el[$listName] = $sList;
-                array_push($res, $el);
-
-                $sList = array();
-            }
-
-            array_push($sList, $l);
-            $prev = $cur;
-        }
-
-        // Last element push
-        $elId = array_search($cur, array_column($idList, $id));
-
-        $el = array();
-        $el[$fieldName] = $idList[$elId];
-        $el[$listName] = $sList;
-
-        array_push($res, $el);
-
-        return $res;
     }
 }

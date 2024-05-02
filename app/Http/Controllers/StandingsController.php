@@ -137,8 +137,8 @@ class StandingsController extends Controller
             }
         }
 
-        $this->sortByKey($flaps, "flaps");
-        $this->sortByKey($penalties, "penalties");
+        $this->sortByKey($flaps, "flaps", -1);
+        $this->sortByKey($penalties, "penalties", -1);
 
         $cres = $this->computePoints($results, 'constructor', $psystem);
         return array(
@@ -224,7 +224,7 @@ class StandingsController extends Controller
     protected function computePoints($results, string $field, $psystem)
     {
         // Sort $results by $field
-        $this->sortByKey($results, $field . '_id', -1);
+        $this->sortByKey($results, $field . '_id');
 
         $prev = $results[0][$field . '_id'];
         $dres = array(array(

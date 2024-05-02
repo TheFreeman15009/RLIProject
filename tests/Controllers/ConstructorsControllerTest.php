@@ -2,12 +2,10 @@
 
 namespace Tests\Controllers;
 
-use App\User;
 use App\Series;
 use Tests\TestCase;
 use App\Constructor;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
