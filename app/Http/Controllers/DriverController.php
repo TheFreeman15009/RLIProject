@@ -12,36 +12,10 @@ use App\Constructor;
 
 class DriverController extends StandingsController
 {
-    public function index()
-    {
-        return view('admin.adminhome');
-    }
-
     public function viewusers()
     {
         $users = User::select('id', 'name', 'avatar', 'updated_at')->get()->sortByDesc('updated_at');
         return view('admin.viewusers')->with('user', $users);
-    }
-    public function viewdetails(User $user)
-    {
-        return view('admin.viewdetails')->with('user', $user);
-    }
-
-    public function viewedit(User $user)
-    {
-        return view('admin.edit')->with('user', $user);
-    }
-
-    public function saveedit(User $user)
-    {
-        $data = request()->all();
-        $user->name = $data['name'];
-        $user->discord_discrim = $data['discord_discrim'];
-        $user->team = $data['team'];
-        $user->steam_id = $data['steam_id'];
-        $user->avatar = $data['avatar'];
-        $user->save();
-        return redirect()->back();
     }
 
     public function viewreports(Report $report)
@@ -75,20 +49,17 @@ class DriverController extends StandingsController
               ->with('existing', $existing);
     }
 
-    public function saveallotment()
+    public function saveallotment(Request $request)
     {
-        $data = request()->all();
-        $userinfo = User::select('*')
-        ->where('id', $data['user_id'])
-        ->get()->toArray();
+        $userName = User::find($request->user_id)->select('name')->first()->name;
 
         $driver = new Driver();
-        $driver->user_id = $data['user_id'];
-        $driver->name = $userinfo['0']['name'];
+        $driver->user_id = $request->user_id;
+        $driver->name = $userName;
         $driver->drivernumber = 5;
         $driver->retired = 0;
-        $driver->alias = $userinfo['0']['name'];
-        $driver->tier = $data['tier'];
+        $driver->alias = $userName;
+        $driver->tier = $request->tier;
         $driver->save();
 
         return redirect()->back();
@@ -219,6 +190,7 @@ class DriverController extends StandingsController
             $seasons[$i]['constructors'] = $ts['constructors'];
         }
 
+        // Response schema is in Tests\Controllers\DriverControllerTest::testSeasonDataApi()
         return response()->json($seasons);
     }
 }

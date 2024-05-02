@@ -45,7 +45,7 @@ $factory->define(Season::class, function (Faker $faker, $params) {
         'tier' => $faker->randomFloat(2),
         'tiername' => $faker->words(3, true),
         'year' => $faker->year,
-        'status' => $faker->numberBetween(0, 2) + $faker->randomFloat(1, 0, 0.3),
+        'status' => $faker->numberBetween(0, 1) + $faker->randomFloat(1, 0, 0.3),
 
         'name' => $faker->optional()->words(3, true),
         'game' => $faker->optional()->company,

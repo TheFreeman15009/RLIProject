@@ -89,11 +89,9 @@ Route::get('login/discord/callback', 'Auth\LoginController@handleProviderCallbac
 
 // Admin Panel
 Route::group(['middleware' => 'can:admin|coordinator'], function () {
-     Route::get('/home/admin', 'DriverController@index')->name('admin.home');
      Route::get('/home/admin/users', 'DriverController@viewusers')->name('coordinator.driverlist');
-     Route::get('/home/admin/user/{user}', 'DriverController@viewdetails')->name('coordinator.driverview');
-     Route::get('/home/admin/user/edit/{user}', 'DriverController@viewedit')->name('coordinator.driveredit');
-     Route::post('/home/admin/user/edit/save/{user}', 'DriverController@saveedit')->name('coordinator.driversave');
+     Route::get('/home/admin/user-allot/{id}', 'DriverController@allotuser')->name('driver.allotpage');
+     Route::post('/home/admin/user-allot/submit', 'DriverController@saveallotment')->name('driver.allot');
 
      Route::get('/result/upload', 'ResultsController@uploadResults')->name('race.upload');
      Route::get('/result/{race}', 'ResultsController@fetchResultsByRaceId')->name('raceresults.id');
@@ -119,12 +117,6 @@ Route::group(['middleware' => 'can:admin|steward'], function () {
      Route::get('/home/steward/verdict/publish', 'ReportsController@applyReports')->name('steward.control');
      Route::post('/home/steward/verdict/publish', 'ReportsController@publishReports')->name('steward.publish');
      // Route::put('/position', 'ResultsController@updatePosition')->name('result.verdict');
-});
-
-// Driver Allotment
-Route::group(['middleware' => 'can:admin|coordinator'], function () {
-     Route::get('/home/admin/user-allot/{id}', 'DriverController@allotuser')->name('driver.allotpage');
-     Route::post('/home/admin/user-allot/submit', 'DriverController@saveallotment')->name('driver.allot');
 });
 
 // League Results Parsing

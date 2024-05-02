@@ -13,6 +13,7 @@ $factory->define(Result::class, function (Faker $faker, $params) {
     $raceId = (array_key_exists('race_id', $params)) ? $params['race_id'] : factory(Race::class)->create();
     $driverId = (array_key_exists('driver_id', $params)) ? $params['driver_id'] : factory(Driver::class)->create();
     $constructorId = (array_key_exists('constructor_id', $params)) ? $params['constructor_id'] : factory(Constructor::class)->create();
+    $position = (array_key_exists('position', $params)) ? $params['position'] : $faker->randomNumber;
 
     $controller = new Controller();
     $createdAt = $faker->optional()->datetime();
@@ -23,7 +24,7 @@ $factory->define(Result::class, function (Faker $faker, $params) {
         'driver_id' => $driverId,
         'constructor_id' => $constructorId,
 
-        'position' => $faker->randomNumber,
+        'position' => $position,
         'points' => 0,
         'time' => $controller->convertMillisToStandard($faker->randomNumber),
         'fastestlaptime' => $controller->convertMillisToStandard($faker->randomNumber),
