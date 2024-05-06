@@ -1,0 +1,113 @@
+{
+    "sessionType": "Q",
+    "trackName": "brands_hatch_2019",
+    "sessionIndex": 1,
+    "raceWeekendIndex": 0,
+    "metaData": "brands_hatch_2019",
+    "serverName": "Indian Racing Community League - Brands Hatch",
+    "sessionType": "Q",
+    "sessionResult": {
+        "bestlap": 84543,
+        "bestSplits": [
+            27273,
+            21738,
+            35268
+        ],
+        "isWetSession": 0,
+        "type": 0,
+        "leaderBoardLines": [
+            {
+                "car": {
+                    "carId": 1007,
+                    "raceNumber": 62,
+                    "carModel": 20,
+                    "cupCategory": 0,
+                    "teamName": "",
+                    "nationality": 0,
+                    "carGuid": -1,
+                    "teamGuid": -1,
+                    "drivers": [
+                        {
+                            "firstName": "Freu",
+                            "lastName": "Police",
+                            "shortName": "FPO",
+                            "playerId": "S222"
+                        }
+                    ]
+                },
+                "currentDriver": {
+                    "firstName": "Freu",
+                    "lastName": "Police",
+                    "shortName": "FPO",
+                    "playerId": "S222"
+                },
+                "currentDriverIndex": 0,
+                "timing": {
+                    "lastLap": 84543,
+                    "lastSplits": [
+                        27297,
+                        21960,
+                        35286
+                    ],
+                    "bestLap": 84543,
+                    "bestSplits": [
+                        27297,
+                        21960,
+                        35286
+                    ],
+                    "totalTime": 711166,
+                    "lapCount": 5,
+                    "lastSplitId": 2
+                },
+                "missingMandatoryPitstop": -1,
+                "driverTotalTimes": []
+            },
+            {
+                "car": {
+                    "carId": 1005,
+                    "raceNumber": 53,
+                    "carModel": 8,
+                    "cupCategory": 0,
+                    "teamName": "",
+                    "nationality": 0,
+                    "carGuid": -1,
+                    "teamGuid": -1,
+                    "drivers": [
+                        {
+                            "firstName": "Le",
+                            "lastName": "Ghost",
+                            "shortName": "LGE",
+                            "playerId": "S1111"
+                        }
+                    ]
+                },
+                "currentDriver": {
+                    "firstName": "Le",
+                    "lastName": "Ghost",
+                    "shortName": "LGE",
+                    "playerId": "S1111"
+                },
+                "currentDriverIndex": 0,
+                "timing": {
+                    "lastLap": 84807,
+                    "lastSplits": [
+                        27603,
+                        21738,
+                        35466
+                    ],
+                    "bestLap": 84720,
+                    "bestSplits": [
+                        27549,
+                        21738,
+                        35268
+                    ],
+                    "totalTime": 847098,
+                    "lapCount": 8,
+                    "lastSplitId": 1
+                },
+                "missingMandatoryPitstop": -1,
+                "driverTotalTimes": []
+            }
+        ]
+    }
+}

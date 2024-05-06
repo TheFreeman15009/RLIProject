@@ -16,14 +16,16 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(User::class, function (Faker $faker, $params) {
+    $steamId = (array_key_exists("steam_id", $params)) ? $params['steam_id'] : $faker->unique()->regexify('[1-9][0-9]{16}');
+
     $createdAt = $faker->optional()->datetime();
     $updatedAt = $faker->optional()->datetime();
 
     return [
         'email' => $faker->unique()->safeEmail,
         'discord_id' => $faker->unique()->regexify('[1-9][0-9]{17}'),
-        'steam_id' => $faker->unique()->regexify('[1-9][0-9]{16}'),
+        'steam_id' => $steamId,
         'api_token' => $faker->unique()->regexify('[1-9][0-9]{16,24}'),
 
         'name' => $faker->name,

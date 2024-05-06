@@ -1,0 +1,114 @@
+{
+    "sessionType": "R",
+    "trackName": "bhatch",
+    "sessionIndex": 2,
+    "raceWeekendIndex": 0,
+    "metaData": "bhatch",
+    "serverName": "Indian Racing Community League - Brands Hatch",
+    "sessionType": "R",
+    "sessionResult": {
+        "bestSplits": [
+            27357,
+            21921,
+            35166
+        ],
+        "isWetSession": 0,
+        "type": 1,
+        "leaderBoardLines": [
+            {
+                "car": {
+                    "carId": 1005,
+                    "raceNumber": 53,
+                    "carModel": 8,
+                    "cupCategory": 0,
+                    "teamName": "",
+                    "nationality": 0,
+                    "carGuid": -1,
+                    "teamGuid": -1,
+                    "drivers": [
+                        {
+                            "firstName": "Le",
+                            "lastName": "Ghost",
+                            "shortName": "LGE",
+                            "playerId": "S1111"
+                        }
+                    ]
+                },
+                "currentDriver": {
+                    "firstName": "Le",
+                    "lastName": "Ghost",
+                    "playerId": "S1111"
+                },
+                "currentDriverIndex": 0,
+                "timing": {
+                    "lastLap": 85794,
+                    "lastSplits": [
+                        27891,
+                        22074,
+                        35829
+                    ],
+                    "bestLap": 84885,
+                    "bestSplits": [
+                        27447,
+                        21921,
+                        35166
+                    ],
+                    "totalTime": 2437441,
+                    "lapCount": 28,
+                    "lastSplitId": 0
+                },
+                "missingMandatoryPitstop": 0,
+                "driverTotalTimes": [
+                    2408706.0
+                ]
+            },
+            {
+                "car": {
+                    "raceNumber": 62,
+                    "carModel": 20,
+                    "cupCategory": 0,
+                    "teamName": "",
+                    "nationality": 0,
+                    "carGuid": -1,
+                    "teamGuid": -1,
+                    "drivers": [
+                        {
+                            "firstName": "Freu",
+                            "lastName": "Police",
+                            "shortName": "FPO",
+                            "playerId": "S222"
+                        }
+                    ]
+                },
+                "currentDriver": {
+                    "firstName": "Freu",
+                    "lastName": "Police",
+                    "shortName": "FPO",
+                    "playerId": "S222"
+                },
+                "currentDriverIndex": 0,
+                "timing": {
+                    "lastLap": 86238,
+                    "lastSplits": [
+                        28056,
+                        22131,
+                        36051
+                    ],
+                    "bestLap": 85575,
+                    "bestSplits": [
+                        27549,
+                        22038,
+                        35616
+                    ],
+                    "totalTime": 2454886,
+                    "lapCount": 28,
+                    "lastSplitId": 0
+                },
+                "missingMandatoryPitstop": 0,
+                "driverTotalTimes": [
+                    2424631.0
+                ]
+            }
+        ]
+    }
+}

@@ -8,6 +8,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Constructor::class, function (Faker $faker, $params) {
     $seriesId = (array_key_exists("series", $params)) ? $params['series'] : factory(Series::class)->create();
+    $game = (array_key_exists("game", $params)) ? $params['game'] : $faker->optional()->word;
 
     $createdAt = $faker->optional()->datetime();
     $updatedAt = $faker->optional()->datetime();
@@ -16,7 +17,7 @@ $factory->define(Constructor::class, function (Faker $faker, $params) {
         'name' => $faker->company,
 
         'official' => $faker->optional()->hexcolor,
-        'game' => $faker->optional()->word,
+        'game' => $game,
         'logo' => $faker->optional()->randomElement([
             'https://cdn.discordapp.com/attachments/635742492192669696/939176367159910470/1.png'
         ]),

@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Input;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use App\User;
 use App\Driver;
 use App\Season;
 use App\Series;
 use App\Points;
 use App\Circuit;
+use App\Http\Requests\AccResultFile;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\AccResultParseRequest;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 // ACC Result Parsing Controller Class
 class AccController extends Controller
 {
     private $output;
+    private const DNF_TIME = 2147483647;
+
     public function __construct()
     {
         $this->output = new ConsoleOutput();
@@ -28,10 +29,7 @@ class AccController extends Controller
     public function raceUpload()
     {
         $series = Series::where('code', 'acc')->firstOrFail();
-        $seasons = Season::where([
-            ['status', '<', 2],
-            ['series', $series['id']]
-        ])->get();
+        $seasons = Season::active()->where('series', $series['id'])->get();
 
         $points = Points::all();
 
@@ -40,62 +38,71 @@ class AccController extends Controller
                ->with('seasons', $seasons);
     }
 
-    public function fileGetContentsUtf8($fn)
+    private function generateTrack(&$season, &$request, &$json)
     {
-        $content = file_get_contents($fn);
-         return mb_convert_encoding(
-             $content,
-             'UTF-8',
-             mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true)
-         );
-    }
-
-    // TODO: Accept other encodings. Currently only supports UTF-8
-    // ACC Result File are in UTF-16LE encoding
-    public function parseJson(Request $request)
-    {
-        $race = request()->file('race');
-        $quali = request()->file('quali');
-
-        // 1 for Multi-Session Single Driver
-        // 0 for Single Session
-        $mode = request()->has('mode') ? request()->mode : 0;
-
-        // $fileEndEnd = mb_convert_encoding($file, 'UTF-8', "UTF-16LE");
-        // $file8 = mb_convert_encoding($file16, 'utf-8');
-        $race_content = file_get_contents($race);
-        $quali_content = file_get_contents($quali);
-
-        $jq = json_decode($quali_content, true);
-        $json = json_decode($race_content, true);
-
-        $round = (int)request()->round;
-        $points = (int)request()->points;
-        $season = Season::find(request()->season);
-
-        $sp_circuit = Circuit::getTrackByGame($json['trackName'], $season['series']);
-        if ($sp_circuit == null) {
-            return response()->json([]);
-        }
+        $sp_circuit = (request()->has('db_circuitTrackName')) ? request('db_circuitTrackName') :
+                        Circuit::game($json['trackName'], $season['series'])->first();
 
         $totalLaps = 0;
-        $results = array();
         if (count($json['sessionResult']['leaderBoardLines']) > 0) {
             $totalLaps = $json['sessionResult']['leaderBoardLines'][0]['timing']['lapCount'];
         }
 
-        $track = array(
+        return array(
             'circuit_id' => $sp_circuit['id'],
             'official' => $sp_circuit['official'],
             'display' => $sp_circuit['name'],
             "season_id" => $season['id'],
             "distance" => $totalLaps / 10.0,
-            "points" => (int)$points,
-            "round" => $round
+            "points" => (int)$request->points,
+            "round" => (int)$request->round
         );
+    }
 
+    private function computeGrid($mode, &$driver, &$qualiPosition)
+    {
+        if ($mode) {
+            if (array_key_exists($driver['currentDriver']['playerId'], $qualiPosition)) {
+                return $qualiPosition[$driver['currentDriver']['playerId']];
+            }
+        } elseif (array_key_exists($driver['car']['carId'], $qualiPosition)) {
+            return $qualiPosition[$driver['car']['carId']];
+        }
+
+        return 0;
+    }
+    private function computeStatus(&$driver, &$json, $k)
+    {
+        $status = 0;
+        if ($json['sessionResult']['bestlap'] == $driver['timing']['bestLap'] && $k < 10) {
+            $status = 1;
+        }
+        if ($driver['timing']['lastLap'] == self::DNF_TIME) {
+            $status = -2;
+        }
+
+        return $status;
+    }
+    private function computeBestLap(&$driver)
+    {
+        return ($driver['timing']['bestLap'] == self::DNF_TIME) ? '-' :
+                    $this->convertMillisToStandard($driver['timing']['bestLap']);
+    }
+    private function computeTotalTime(&$driver)
+    {
+        return ($driver['timing']['lastLap'] == self::DNF_TIME) ? 'DNF' :
+                    $this->convertMillisToStandard($driver['timing']['totalTime']);
+    }
+
+
+    private function generateResults(&$season, $mode, &$json, &$jq)
+    {
+        $results = array();
         $qualiPosition = array();
+        $userSteamIds = array();
         foreach ($jq['sessionResult']['leaderBoardLines'] as $k => $driver) {
+            array_push($userSteamIds, substr($driver['currentDriver']['playerId'], 1));
+
             if ($mode) {
                 // Multi Session, Single Driver Setup
                 if (!array_key_exists($driver['currentDriver']['playerId'], $qualiPosition)) {
@@ -107,74 +114,68 @@ class AccController extends Controller
             }
         }
 
+        $users = User::select('id', 'steam_id')->whereIn('steam_id', $userSteamIds)->get();
+        $userIds = $users->pluck('id')->toArray();
+        $users = $users->toArray();
+
+        $dr = Driver::select('id', 'name', 'user_id')->whereIn('user_id', $userIds)->get()->toArray();
+
         foreach ($json['sessionResult']['leaderBoardLines'] as $k => $driver) {
-            $user = User::where('steam_id', substr($driver['currentDriver']['playerId'], 1))->first();
-            $dr = Driver::where('user_id', $user['id'])->first();
-            if ($dr == null) {
-                $dr['name'] = $driver['currentDriver']['shortName'];
-                $dr['id'] = -1;
-            }
+            $driverId = -1;
+            $driverName = $driver['currentDriver']['shortName'];
 
-            $grid = 0;
-            $status = 0;
-            $total_time = "";
-            $bestLap = "";
-            $team_ind = array_search($driver['car']['carModel'], array_column($season['constructors'], "game"));
-
-            // Grid Position
-            if ($mode) {
-                if (array_key_exists($driver['currentDriver']['playerId'], $qualiPosition)) {
-                    $grid = $qualiPosition[$driver['currentDriver']['playerId']];
-                }
-            } else {
-                if (array_key_exists($driver['car']['carId'], $qualiPosition)) {
-                    $grid = $qualiPosition[$driver['car']['carId']];
+            $user_ind = array_search(substr($driver['currentDriver']['playerId'], 1), array_column($users, 'steam_id'));
+            if ($user_ind !== false) {
+                $dr_ind = array_search($users[$user_ind]['id'], array_column($dr, 'user_id'));
+                if ($dr_ind !== false) {
+                    $driverId = $dr[$dr_ind]['id'];
+                    $driverName = $dr[$dr_ind]['name'];
                 }
             }
 
-            // Fastest Lap
-            if ($json['sessionResult']['bestlap'] == $driver['timing']['bestLap'] && $k < 10) {
-                $status = 1;
-            }
-
-            // Total Time
-            // if($totalLaps == $driver['timing']['lapCount'])
-            if ($driver['timing']['lastLap'] == 2147483647) {
-                $status = -2;
-                $total_time = "DNF";
-            } else {
-                $total_time = $this->convertMillisToStandard($driver['timing']['totalTime']);
-            }
-            // else
-            // {
-            //     $total_time = "+" . ($totalLaps - $driver['timing']['lapCount']) . " Lap";
-            //     if($totalLaps - $driver['timing']['lapCount'] > 1)
-            //         $total_time .= "s";
-            // }
-
-            if ($driver['timing']['bestLap'] == 2147483647) {
-                $bestLap = "-";
-            } else {
-                $bestLap = $this->convertMillisToStandard($driver['timing']['bestLap']);
-            }
+            $seasonConstructors = $season->constructors->toArray();
+            $team_ind = array_search($driver['car']['carModel'], array_column($seasonConstructors, "game"));
 
             // Push to Results
             array_push($results, array(
                 "position" => $k + 1,
-                "driver" => $dr['name'],
-                "driver_id" => $dr['id'],
-                "matched_driver" => $dr['name'],
-                "team" => $season['constructors'][$team_ind]['name'],
-                "constructor_id" => $season['constructors'][$team_ind]['id'],
-                "matched_team" => $season['constructors'][$team_ind]['name'],
-                "grid" => $grid,
+                "driver" => $driverName,
+                "driver_id" => $driverId,
                 "stops" => $driver['timing']['lapCount'],
-                "status" => $status,
-                "fastestlaptime" => $bestLap,
-                "time" => $total_time
+                "time" => $this->computeTotalTime($driver),
+                "team" => $seasonConstructors[$team_ind]['name'],
+                "fastestlaptime" => $this->computeBestLap($driver),
+                "status" => $this->computeStatus($driver, $json, $k),
+                "constructor_id" => $seasonConstructors[$team_ind]['id'],
+                "grid" => $this->computeGrid($mode, $driver, $qualiPosition)
             ));
         }
 
-        return response()->json(["track" => $track, "results" => $results]);
+        return $results;
+    }
+
+    private function loadFile(&$request, $session)
+    {
+        $sessionFile = $request->file($session);
+        $sessionContent = file_get_contents($sessionFile);
+
+        return json_decode($sessionContent, true);
+    }
+
+    // ACC Result File must be in UTF-8 encoding
+    public function parseJson(AccResultParseRequest $request)
+    {
+        $jq = $this->loadFile($request, 'quali');
+        $json = $this->loadFile($request, 'race');
+
+        $season = (request()->has('db_season')) ? request('db_season') : Season::find($request->season);
+
+        $accRuleSet = new AccResultFile();
+        Validator::make($json, $accRuleSet->rules($season))->validate();
+
+        return response()->json([
+            "track" => $this->generateTrack($season, $request, $json),
+            "results" => $this->generateResults($season, $request->mode, $json, $jq)
+        ]);
     }
 }

@@ -28,10 +28,7 @@ class AcController extends ImageController
     public function raceUpload()
     {
         $series = Series::where('code', 'ac')->firstOrFail();
-        $seasons = Season::where([
-            ['status', '<', 2],
-            ['series', $series['id']]
-        ])->get();
+        $seasons = Season::active()->where('series', $series['id'])->get();
 
         $points = Points::all();
 
@@ -76,7 +73,7 @@ class AcController extends ImageController
         $round = (int)request()->round;
         $points = (int)request()->points;
         $season = Season::find(request()->season);
-        $sp_circuit = Circuit::getTrackByGame($rcsv[0][6], $season['series']);
+        $sp_circuit = Circuit::game($rcsv[0][6], $season['series'])->first();
         if ($sp_circuit == null) {
             return response()->json([]);
         }
@@ -188,12 +185,12 @@ class AcController extends ImageController
         $round = (int)request()->round;
         $points = (int)request()->points;
         $season = Season::find(request()->season);
+        $seasonConstructors = $season->constructors->toArray();
 
-        $sp_circuit = Circuit::getTrackByGame($json['TrackName'], $season['series']);
+        $sp_circuit = Circuit::game($json['TrackName'], $season['series'])->first();
         if ($sp_circuit == null) {
             return response()->json([]);
         }
-
 
         // Total Lap Calculation
         $lapsMap = $this->memoizeLaps($json);
@@ -257,9 +254,9 @@ class AcController extends ImageController
                 "driver" => $dr['name'],
                 "driver_id" => $dr['id'],
                 "matched_driver" => $dr['name'],
-                "team" => $season['constructors'][$team_ind]['name'],
-                "constructor_id" => $season['constructors'][$team_ind]['id'],
-                "matched_team" => $season['constructors'][$team_ind]['name'],
+                "team" => $seasonConstructors[$team_ind]['name'],
+                "constructor_id" => $seasonConstructors[$team_ind]['id'],
+                "matched_team" => $seasonConstructors[$team_ind]['name'],
                 "grid" => $grid,
                 "stops" => $lapsMap[$driver['CarId']],
                 "status" => $status,

@@ -24,14 +24,6 @@ class Circuit extends Model
         return json_decode(json_encode($official_list), true);
     }
 
-    public static function getTrackByGame($game, $series)
-    {
-        $track = Circuit::where('game', $game)
-                        ->where('series', $series)
-                        ->first();
-
-        return $track;
-    }
     public function associatedSeries()
     {
         return $this->belongsTo('App\Series', 'series');
@@ -40,5 +32,25 @@ class Circuit extends Model
     public function races()
     {
         return $this->hasMany('App\Race');
+    }
+
+     /**
+     * Scope a query to return matching game for a particular series.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $game
+     * @param  int $seriesId
+     * @param  int|null $title
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGame($query, $game, $seriesId, $title = null)
+    {
+        $resultQuery = $query->where('game', $game)->where('series', $seriesId);
+        if (!is_null($title)) {
+            $resultQuery = $resultQuery->where('title', $title);
+        }
+
+        $resultQuery = $resultQuery->orderBy('id', 'desc');
+        return $resultQuery;
     }
 }
