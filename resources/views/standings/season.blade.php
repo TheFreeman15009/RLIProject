@@ -165,9 +165,9 @@
                </tr>
             </thead>
             <tbody>
-               @for ($i = 0; $i < $ccount; $i++) @php if($cres[$i]['name']=='Reserve' ) continue; @endphp <tr class="">
+               @for ($i = 0, $k = 0; $i < $ccount; $i++, $k++) @php if($cres[$i]['name']=='Reserve' ) {$k--; continue;} @endphp <tr class="">
                   <td class="pr-2 break-words font-semibold rounded-lg border border-white text-center extraPosCol">
-                     {{$i+1}}
+                     {{$k+1}}
                   </td>
                   <td class="w-2/3 xl:w-7/12 pr-2 break-words font-semibold rounded-lg border border-white">
                      {{$cres[$i]['name']}}
@@ -176,7 +176,7 @@
                      {{$cres[$i]['points']}}
                   </td>
                   </tr>
-                  @endfor
+               @endfor
             </tbody>
          </table>
    </div>
