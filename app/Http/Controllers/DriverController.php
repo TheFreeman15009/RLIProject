@@ -75,7 +75,7 @@ class DriverController extends StandingsController
         $series = Series::select('id', 'name', 'code', 'games')->get()->toArray();
         $constructor = Constructor::all()->toArray();
 
-        $seasons = Season::where('status', '<', 2)->get()->toArray();
+        $seasons = Season::active()->get()->toArray();
         $ts = array();
 
         // Iterate through all Active Seasons
@@ -176,7 +176,7 @@ class DriverController extends StandingsController
         $constructor = Constructor::all()->toArray();
 
         $seasons = Season::select('id', 'game', 'season', 'tier', 'name', 'series', 'constructors', 'tttracks')
-                     ->where('status', '<', 2)->get()->toArray();
+                         ->active()->get()->toArray();
 
         // Iterate through all Active Seasons
         for ($i = 0; $i < count($seasons); ++$i) {

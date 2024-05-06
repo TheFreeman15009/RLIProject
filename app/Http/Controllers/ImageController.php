@@ -30,7 +30,7 @@ class ImageController extends Controller
 
     public function raceIndex()
     {
-        $seasons = Season::where('status', '<', 2)->get();
+        $seasons = Season::active()->get();
         return view('raceimage')->with('seasons', $seasons);
     }
     public function qualiIndex()

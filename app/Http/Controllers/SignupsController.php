@@ -165,7 +165,7 @@ class SignupsController extends Controller
 
     public function viewsignups()
     {
-        $activeSeasons = Season::active()->get();
+        $activeSeasons = Season::activeWithSignups()->get();
         $activeSeasonIds = $activeSeasons->pluck('id');
         $signedUsers = Signup::whereIn('season', $activeSeasonIds)
                       ->orderBy('updated_at', 'desc')->get()
@@ -191,7 +191,7 @@ class SignupsController extends Controller
      */
     public function getSignupsApi()
     {
-        $activeSeasons = Season::active()->get();
+        $activeSeasons = Season::activeWithSignups()->get();
         $seasonIds = $activeSeasons->pluck('id')->toArray();
         $activeSeasons = $activeSeasons->toArray();
 

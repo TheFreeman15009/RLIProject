@@ -247,7 +247,7 @@ class ResultsController extends Controller
 
     public function uploadResults()
     {
-        $season = Season::where('status', '<', 2)->get()->load('series');
+        $season = Season::active()->get()->load('series');
         $points = Points::all();
         $tracks = Circuit::select('id', 'name', 'series')->get()->load('series');
         $constructor = Constructor::select('id', 'name')->get();

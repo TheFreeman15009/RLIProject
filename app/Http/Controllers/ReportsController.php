@@ -24,7 +24,7 @@ class ReportsController extends Controller
         }
 
         // Return All Active Seasons which is Reportable
-        $seasons = Season::where('status', '<', 2)
+        $seasons = Season::active()
                          ->whereNotNull('report_window')
                          ->get()->toArray();
 
@@ -136,7 +136,7 @@ class ReportsController extends Controller
 
     public function applyReports()
     {
-        $seasons = Season::where('status', '<', 2)->get()->toArray();
+        $seasons = Season::active()->get()->toArray();
         return view('user.reportadmin')->with('seasons', $seasons);
     }
 

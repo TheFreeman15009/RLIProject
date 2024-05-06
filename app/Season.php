@@ -32,7 +32,7 @@ class Season extends Model
     public function getConstructorsAttribute($string)
     {
         $cars = array_map('intval', explode(self::CDELIM, $string));
-        $lm = Constructor::whereIn('id', $cars)->get()->toArray();
+        $lm = Constructor::whereIn('id', $cars)->get();
 
         return $lm;
     }
@@ -55,16 +55,27 @@ class Season extends Model
     }
 
     /**
-     * Scope a query to only include active users.
+     * Scope a query to only include active seasons with signups.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActiveWithSignups($query)
+    {
+        return $query->where([
+            ['status', '<', 2],
+            ['status', '>', 0]
+        ]);
+    }
+
+    /**
+     * Scope a query to only include active seasons.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query)
     {
-        return $query->where([
-            ['status', '<', 2],
-            ['status', '>', 0]
-        ]);
+        return $query->where('status', '<', 2);
     }
 }
