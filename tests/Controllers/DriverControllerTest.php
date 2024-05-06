@@ -21,7 +21,7 @@ class DriverControllerTest extends TestCase
                          ->withSession(['userRoles' => [
                             'coordinator' => 1,
                          ]])
-                         ->post('/home/admin/user-allot/submit', [
+                         ->post(route('driver.allot'), [
                             'user_id' => $user->id,
                             'tier' => 3
                          ]);
@@ -67,7 +67,7 @@ class DriverControllerTest extends TestCase
         $race = $this->apiDataSetup($pushedResults);
 
         $userToken = $pushedResults[0]->driver->user->api_token;
-        $response = $this->get('/drivers/data', [
+        $response = $this->get(route('telemetry.drivers'), [
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $userToken
         ]);
@@ -128,7 +128,7 @@ class DriverControllerTest extends TestCase
         $this->apiDataSetup($pushedResults);
 
         $userToken = $pushedResults[0]->driver->user->api_token;
-        $response = $this->get('/api/drivers/data', [
+        $response = $this->get(route('telemetry.season'), [
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $userToken
         ]);

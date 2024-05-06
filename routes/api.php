@@ -18,7 +18,7 @@ Route::get('/constructors', 'ConstructorsController@index')->name('constructors.
 Route::get('/circuits', 'CircuitsController@index')->name('circuits.index');
 
 // Fetch Driver & Constructor Details - Telemetry API
-Route::get('/drivers/data', 'DriverController@seasonData')->name('telemetry.drivers');
+Route::get('/drivers/data', 'DriverController@seasonData')->name('telemetry.season');
 Route::post('/report/submit', 'ReportsController@bulkCreate')->name('steward.upload');
 
 // Fetch User Info - Discord Bot

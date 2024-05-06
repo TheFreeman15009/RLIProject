@@ -19,7 +19,7 @@ class ExampleTest extends TestCase
     public function testInsertSeries()
     {
         // $this->assertTrue(true);
-        $response = $this->get('/joinus');
+        $response = $this->get(route('joinus'));
         $response->assertOk();
         $response->assertViewHas('irc_guild');
         // $response->assertSee(config('services.discord.irc_guild'));
