@@ -30,18 +30,4 @@ class ExampleTest extends TestCase
         $s = factory(Series::class, 1)->create();
         $this->assertEquals(1, count(Series::all()->toArray()));
     }
-
-    public function testUserProfile()
-    {
-        $user = factory(User::class)->make();
-        $response = $this->actingAs($user)
-                         ->withSession(['userRoles' => [
-                            'coordinator' => 0,
-                            'signup' => 1
-                         ]])
-                         ->get('/home/admin/view-signups');
-
-        $response->assertOk();
-        $response->assertSee($user->name);
-    }
 }

@@ -30,15 +30,16 @@ class User extends Authenticatable
     protected static $logName = 'user';         // Name for the log
     protected static $logAttributes = ['*'];    // Log All fields in the table
     protected static $logOnlyDirty = true;      // Only log the fields that have been updated
+    public const SENSITIVEATTRIBUTES = [
+        'password', 'remember_token', 'api_token', 'email', 'mothertongue', 'location'
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'remember_token', 'api_token'
-    ];
+    protected $hidden = self::SENSITIVEATTRIBUTES;
 
     /**
      * The attributes that should be cast to native types.
