@@ -17,11 +17,9 @@ class ConstructorsControllerTest extends TestCase
     public function testIndex()
     {
         $seriesId = factory(Series::class)->create()->id;
-        $constructors = factory(Constructor::class, 2)->create([
-            'series' => $seriesId
-        ]);
+        $constructors = factory(Constructor::class, 2)->create(['series_id' => $seriesId]);
 
-        $this->json('GET', route('constructors.index', ['series' => $seriesId, 'fields' => 'id']))
+        $this->json('GET', route('constructors.index', ['series_id' => $seriesId, 'fields' => 'id']))
              ->assertOk()
              ->assertJsonCount(2)
              ->assertExactJson([
@@ -33,7 +31,7 @@ class ConstructorsControllerTest extends TestCase
                 ],
              ]);
 
-        $this->json('GET', route('constructors.index', ['series' => '999']))
+        $this->json('GET', route('constructors.index', ['series_id' => '999']))
              ->assertOk()
              ->assertJsonCount(0);
     }

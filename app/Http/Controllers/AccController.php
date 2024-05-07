@@ -28,8 +28,8 @@ class AccController extends Controller
     // View to Upload Race Results
     public function raceUpload()
     {
-        $series = Series::where('code', 'acc')->firstOrFail();
-        $seasons = Season::active()->where('series', $series['id'])->get();
+        $series = Series::code('acc')->firstOrFail();
+        $seasons = Season::active()->where('series_id', $series['id'])->get();
 
         $points = Points::all();
 
@@ -41,7 +41,7 @@ class AccController extends Controller
     private function generateTrack(&$season, &$request, &$json)
     {
         $sp_circuit = (request()->has('db_circuitTrackName')) ? request('db_circuitTrackName') :
-                        Circuit::game($json['trackName'], $season['series'])->first();
+                        Circuit::game($json['trackName'], $season['series_id'])->first();
 
         $totalLaps = 0;
         if (count($json['sessionResult']['leaderBoardLines']) > 0) {

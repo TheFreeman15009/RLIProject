@@ -27,7 +27,7 @@ class AccResultFile extends FormRequest
     public function rules(Season $season): array
     {
         return [
-            'trackName' => [ 'required', 'string', new TrackNameForSeries($season->series) ],
+            'trackName' => [ 'required', 'string', new TrackNameForSeries($season->series_id) ],
             'sessionResult.bestlap' => [ 'required', 'gte:0' ],
 
             'sessionResult.leaderBoardLines.*.timing.lapCount' => [ 'required', 'gte:0' ],

@@ -15,6 +15,6 @@ class Points extends Model
 
     public function races()
     {
-        return $this->hasMany('App\Race', 'points');
+        return $this->hasMany('App\Race');
     }
 }

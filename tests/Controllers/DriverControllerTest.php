@@ -43,7 +43,7 @@ class DriverControllerTest extends TestCase
         $points->save();
 
         // Creates multiple series per race
-        $race = factory(Race::class)->create(['points' => $points->id]);
+        $race = factory(Race::class)->create(['points_id' => $points->id]);
 
         $pushedResults = array();
         $result = factory(Result::class)->create(['race_id' => $race->id, 'position' => 1]);
@@ -115,10 +115,10 @@ class DriverControllerTest extends TestCase
 
         // Series fragment
         $response->assertJsonFragment([
-            "id" => $race->season->associatedSeries->id,
-            "name" => $race->season->associatedSeries->name,
-            "code" => $race->season->associatedSeries->code,
-            "games" => $race->season->associatedSeries->games
+            "id" => $race->season->series_id,
+            "name" => $race->season->series->name,
+            "code" => $race->season->series->code,
+            "games" => $race->season->series->games
         ]);
     }
 
@@ -141,7 +141,7 @@ class DriverControllerTest extends TestCase
                 'season',
                 'tier',
                 'name',
-                'series',
+                'series_id',
                 'constructors' => [
                     [
 
@@ -154,7 +154,7 @@ class DriverControllerTest extends TestCase
                             "game",
                             "logo",
                             "car",
-                            "series",
+                            "series_id",
                             "title",
                         ],
                         "flaps",
@@ -175,7 +175,7 @@ class DriverControllerTest extends TestCase
                         "laps",
                         "flag",
                         "game",
-                        "series",
+                        "series_id",
                         "title",
                     ]
                 ],
@@ -191,7 +191,7 @@ class DriverControllerTest extends TestCase
                             "game",
                             "logo",
                             "car",
-                            "series",
+                            "series_id",
                             "title",
                         ],
                         "flaps",

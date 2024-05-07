@@ -7,14 +7,14 @@ use App\Circuit;
 use Faker\Generator as Faker;
 
 $factory->define(Circuit::class, function (Faker $faker, $params) {
-    $seriesId = (array_key_exists("series", $params)) ? $params['series'] : factory(Series::class)->create();
+    $seriesId = (array_key_exists('series_id', $params)) ? $params['series_id'] : factory(Series::class)->create();
     $game = (array_key_exists("game", $params)) ? $params['game'] : $faker->optional()->word;
 
     $createdAt = $faker->optional()->datetime();
     $updatedAt = $faker->optional()->datetime();
 
     return [
-        'series' => $seriesId,
+        'series_id' => $seriesId,
         'title' => $faker->company,
 
         'name' => $faker->country . " Grand Prix",

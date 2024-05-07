@@ -247,7 +247,7 @@
       <div class="flex gap-5">
       <div class="text-lg font-semibold">Season ID: {{$season['id']}}</div>
       <div class="text-lg font-semibold">Tier: {{$season['tier']}}</div>
-      <div class="text-lg font-semibold">Series: {{$season['series']}}</div>
+      <div class="text-lg font-semibold">Series: {{$season['series_id']}}</div>
       <div class="text-lg font-semibold">Status: {{$season['status']}}</div>
 </div>
    </div>

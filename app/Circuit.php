@@ -15,7 +15,7 @@ class Circuit extends Model
     protected static $logAttributes = ['*']; // Log All fields in the table
     protected static $logOnlyDirty = true;   // Only log the fields that have been updated
 
-    protected static $filterableFields = ['series', 'title', 'game', 'id', 'name', 'country'];
+    protected static $filterableFields = ['series_id', 'title', 'game', 'id', 'name', 'country'];
     protected static $prohibitedFields = [];        // For Index API
 
     public static function getOfficial()
@@ -24,9 +24,9 @@ class Circuit extends Model
         return json_decode(json_encode($official_list), true);
     }
 
-    public function associatedSeries()
+    public function series()
     {
-        return $this->belongsTo('App\Series', 'series');
+        return $this->belongsTo('App\Series');
     }
 
     public function races()
@@ -45,7 +45,7 @@ class Circuit extends Model
      */
     public function scopeGame($query, $game, $seriesId, $title = null)
     {
-        $resultQuery = $query->where('game', $game)->where('series', $seriesId);
+        $resultQuery = $query->where('game', $game)->where('series_id', $seriesId);
         if (!is_null($title)) {
             $resultQuery = $resultQuery->where('title', $title);
         }

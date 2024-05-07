@@ -22,7 +22,7 @@ class LoadTopBar
             ['status', '>=', 1],
             ['show', '=', 1]
         ])
-        ->orderBy('series', 'asc')
+        ->orderBy('series_id', 'asc')
         ->orderBy('tier', 'asc')
         ->orderBy('season', 'desc')
         ->get()
@@ -33,7 +33,7 @@ class LoadTopBar
         $seasons = array();
         for ($i = 0; $i < count($all_seasons); $i++) {
             $series = array();
-            while ($i < count($all_seasons) && $all_seasons[$i]['series'] == $all_seasons[$prev]['series']) {
+            while ($i < count($all_seasons) && $all_seasons[$i]['series_id'] == $all_seasons[$prev]['series_id']) {
                 // if($all_seasons[$i]['season'] == (int)$all_seasons[$i]['season'])
                 array_push($series, $all_seasons[$i]);
 
@@ -63,7 +63,7 @@ class LoadTopBar
                 array_push($tier, $seq);
             }
 
-            $series_n = Series::find($tier[0][0]['series']);
+            $series_n = Series::find($tier[0][0]['series_id']);
             array_push($res, array("name" => $series_n, "tier" => $tier));
         }
 
