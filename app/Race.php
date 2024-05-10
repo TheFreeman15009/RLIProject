@@ -31,7 +31,7 @@ class Race extends Model
     }
 
     protected $fillable = [
-        'circuit_id', 'season_id', 'round', 'distance', 'points'
+        'circuit_id', 'season_id', 'round', 'distance', 'points_id'
     ];
 
     public function season()
@@ -44,9 +44,9 @@ class Race extends Model
         return $this->belongsTo('App\Circuit');
     }
 
-    public function pointSystem()
+    public function points()
     {
-        return $this->belongsTo('App\Points', 'points');
+        return $this->belongsTo('App\Points');
     }
 
     public function results()

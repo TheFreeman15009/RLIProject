@@ -24,9 +24,9 @@ class Season extends Model
         'game', 'season', 'tier', 'year'
     ];
 
-    public function associatedSeries()
+    public function series()
     {
-        return $this->belongsTo('App\Series', 'series');
+        return $this->belongsTo('App\Series');
     }
 
     public function getConstructorsAttribute($string)
@@ -51,7 +51,7 @@ class Season extends Model
 
     public function signups()
     {
-        return $this->hasMany('App\Signup', 'season');
+        return $this->hasMany('App\Signup');
     }
 
     /**

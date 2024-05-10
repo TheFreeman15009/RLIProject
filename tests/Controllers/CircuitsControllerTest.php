@@ -17,11 +17,9 @@ class CircuitsControllerTest extends TestCase
     public function testIndex()
     {
         $seriesId = factory(Series::class)->create()->id;
-        $circuits = factory(Circuit::class, 2)->create([
-            'series' => $seriesId
-        ]);
+        $circuits = factory(Circuit::class, 2)->create(['series_id' => $seriesId]);
 
-        $this->json('GET', route('circuits.index', ['series' => $seriesId, 'fields' => 'id']))
+        $this->json('GET', route('circuits.index', ['series_id' => $seriesId, 'fields' => 'id']))
              ->assertOk()
              ->assertJsonCount(2)
              ->assertExactJson([
@@ -33,7 +31,7 @@ class CircuitsControllerTest extends TestCase
                 ],
              ]);
 
-        $this->json('GET', route('circuits.index', ['series' => '999']))
+        $this->json('GET', route('circuits.index', ['series_id' => '999']))
              ->assertOk()
              ->assertJsonCount(0);
     }

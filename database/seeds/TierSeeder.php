@@ -26,11 +26,11 @@ class TierSeeder extends Seeder
 
         // pass series_id -> 1 season -> 1 - 15 constructors (note), (pass series_id) 3 circuits
         $seasonParams = [
-            'series' => $seriesId,
+            'series_id' => $seriesId,
             'show' => 1
         ];
         if ($sn != null) {
-            $seasonParams['season'] = $sn;
+            $seasonParams['season_id'] = $sn;
         }
         if ($tier != null) {
             $seasonParams['tier'] = $tier;
@@ -46,7 +46,7 @@ class TierSeeder extends Seeder
             $carpref .= $season->constructors[$carprefInd[1]]['id'] . ',' . $season->constructors[$carprefInd[2]]['id'];
 
             $signups[] = factory(Signup::class)->create([
-                'season' => $season->id,
+                'season_id' => $season->id,
                 'carprefrence' => $carpref
             ]);
         }

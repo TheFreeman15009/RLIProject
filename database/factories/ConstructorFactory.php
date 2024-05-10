@@ -7,7 +7,7 @@ use App\Constructor;
 use Faker\Generator as Faker;
 
 $factory->define(Constructor::class, function (Faker $faker, $params) {
-    $seriesId = (array_key_exists("series", $params)) ? $params['series'] : factory(Series::class)->create();
+    $seriesId = (array_key_exists('series_id', $params)) ? $params['series_id'] : factory(Series::class)->create();
     $game = (array_key_exists("game", $params)) ? $params['game'] : $faker->optional()->word;
 
     $createdAt = $faker->optional()->datetime();
@@ -25,7 +25,7 @@ $factory->define(Constructor::class, function (Faker $faker, $params) {
             'https://www.f1gamesetup.com/img/teams/2021/ferrari-2021.png'
         ]),
 
-        'series' => $seriesId,
+        'series_id' => $seriesId,
         'title' => $faker->company,
 
         'created_at' => ($createdAt != null) ? $createdAt->format('Y-m-d H:i:s') : $createdAt,

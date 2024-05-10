@@ -2,40 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\User;
 use App\Driver;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Schema;
 
 class BotController extends Controller
 {
-    public function fetchdetails($query, $discord_id)
+    public function fetchUserDetails($query, $discord_id)
     {
-        // Check if the column requested exists in the DB or no
-        $doesItExist = Schema::hasColumn('users', $query);
-
-        // Columns API is not allowed to access
-        $list = ['email','remember_token','location','mothertongue'];
-
-        if (in_array($query, $list)) {
-            return response()->json(['message' => 'Forbidden']);
+        if (in_array($query, User::SENSITIVEATTRIBUTES)) {
+            return response()->json(['message' => 'Forbidden'], Response::HTTP_FORBIDDEN);
         }
+
+        // Check if the column requested exists in the DB
+        $doesItExist = Schema::hasColumn('users', $query);
         if ($doesItExist) {
-            $data = User::where('discord_id', '=', $discord_id)->first($query);
-            return response()->json(['data' => $data[$query]]);
+            $user = User::select("{$query}")->where('discord_id', $discord_id)->first();
+            return (is_null($user)) ?
+                response()->json(['message' => 'Discord ID not found'], Response::HTTP_NOT_FOUND)
+                : response()->json(['data' => $user->$query]);
         } else {
-            return response()->json(['message' => 'Invalid parameters']);
+            return response()->json(['message' => 'Invalid parameters', Response::HTTP_BAD_REQUEST]);
         }
     }
 
     public function fetchDriverId($discord_id)
     {
-        // Fetch data from the DB
-        $data = User::select('id')->where('discord_id', $discord_id)->get()->load('driver')->toArray();
-        if (empty($data)) {  // If array is empty return an error response
-            return response()->json(['error' => 'Driver ID not found']);
+        $user = User::select('id')->where('discord_id', $discord_id)->first();
+        if (is_null($user)) {
+            return response()->json(['error' => 'Driver ID not found'], Response::HTTP_NOT_FOUND);
         } else {
-            return response()->json(['data' => $data[0]['driver']]);
+            return response()->json(['data' => $user->driver->toArray()]);
         }
     }
 

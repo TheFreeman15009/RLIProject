@@ -15,7 +15,7 @@ class Constructor extends Model
     protected static $logAttributes = ['*'];    // Log All fields in the table
     protected static $logOnlyDirty = true;      // Only log the fields that have been updated
 
-    protected static $filterableFields = ['series', 'title', 'game', 'id', 'name'];
+    protected static $filterableFields = ['series_id', 'title', 'game', 'id', 'name'];
     protected static $prohibitedFields = [];    // For Index API
 
     public static function getTeams()
@@ -24,9 +24,9 @@ class Constructor extends Model
         return json_decode(json_encode($team_list), true);
     }
 
-    public function associatedSeries()
+    public function series()
     {
-        return $this->belongsTo('App\Series', 'series');
+        return $this->belongsTo('App\Series');
     }
 
     public function results()

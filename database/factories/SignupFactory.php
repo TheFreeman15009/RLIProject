@@ -15,7 +15,7 @@ $factory->define(Signup::class, function (Faker $faker, $params) {
     $updatedAt = $faker->optional()->datetime();
 
     $userId = (array_key_exists('user_id', $params)) ? $params['user_id'] : factory(User::class)->create();
-    $seasonId = (array_key_exists('season', $params)) ? $params['season'] : factory(Season::class)->create();
+    $seasonId = (array_key_exists('season_id', $params)) ? $params['season_id'] : factory(Season::class)->create();
     if (array_key_exists('carprefrence', $params)) {
         $carpref = $params['carprefrence'];
     } else {
@@ -25,7 +25,7 @@ $factory->define(Signup::class, function (Faker $faker, $params) {
 
     return [
         'user_id' => $userId,
-        'season' => $seasonId,
+        'season_id' => $seasonId,
         'carprefrence' => $carpref,                                                                         // 3 Constructor IDs
 
         'attendance' => (int)$faker->boolean,

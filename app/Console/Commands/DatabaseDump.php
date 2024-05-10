@@ -58,8 +58,9 @@ class DatabaseDump extends Command
             $commandOutput = $this->localDbDump->outputFromDump(...$dbDumpAttributes);
             $infoOutput = explode("\n", $commandOutput);
 
-            foreach ($infoOutput as $line)
+            foreach ($infoOutput as $line) {
                 $this->info($line);
+            }
         } catch (\Exception $e) {
             $this->error("Exception in dumping DB. Error message: " . $e->getMessage());
 
@@ -67,5 +68,7 @@ class DatabaseDump extends Command
 
             return 1;
         }
+
+        return 0;
     }
 }

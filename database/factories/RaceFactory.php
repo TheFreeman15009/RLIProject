@@ -10,14 +10,14 @@ use Faker\Generator as Faker;
 
 $factory->define(Race::class, function (Faker $faker, $params) {
     $seasonId = (array_key_exists('season_id', $params)) ? $params['season_id'] : factory(Season::class)->create()->id;
-    $pointsId = (array_key_exists('points', $params)) ? $params['points'] : factory(Points::class)->create();
+    $pointsId = (array_key_exists('points_id', $params)) ? $params['points_id'] : factory(Points::class)->create();
 
     $circuitId = 0;
     if (array_key_exists('circuit_id', $params)) {
         $circuitId = $params['circuit_id'];
     } else {
-        $seriesId = Season::find($seasonId)->series;
-        $circuitId = factory(Circuit::class)->create(['series' => $seriesId]);
+        $seriesId = Season::find($seasonId)->series_id;
+        $circuitId = factory(Circuit::class)->create(['series_id' => $seriesId]);
     }
 
     $createdAt = $faker->optional()->datetime();
@@ -26,7 +26,7 @@ $factory->define(Race::class, function (Faker $faker, $params) {
     return [
         'season_id' => $seasonId,
         'circuit_id' => $circuitId,
-        'points' => $pointsId,
+        'points_id' => $pointsId,
 
         'round' => $faker->randomNumber,
         'distance' => $faker->randomFloat(2, 0, 1),

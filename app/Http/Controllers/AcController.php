@@ -27,8 +27,8 @@ class AcController extends ImageController
     // View for CSV Upload
     public function raceUpload()
     {
-        $series = Series::where('code', 'ac')->firstOrFail();
-        $seasons = Season::active()->where('series', $series['id'])->get();
+        $series = Series::code('ac')->firstOrFail();
+        $seasons = Season::active()->where('series_id', $series['id'])->get();
 
         $points = Points::all();
 
@@ -73,7 +73,7 @@ class AcController extends ImageController
         $round = (int)request()->round;
         $points = (int)request()->points;
         $season = Season::find(request()->season);
-        $sp_circuit = Circuit::game($rcsv[0][6], $season['series'])->first();
+        $sp_circuit = Circuit::game($rcsv[0][6], $season['series_id'])->first();
         if ($sp_circuit == null) {
             return response()->json([]);
         }
@@ -187,7 +187,7 @@ class AcController extends ImageController
         $season = Season::find(request()->season);
         $seasonConstructors = $season->constructors->toArray();
 
-        $sp_circuit = Circuit::game($json['TrackName'], $season['series'])->first();
+        $sp_circuit = Circuit::game($json['TrackName'], $season['series_id'])->first();
         if ($sp_circuit == null) {
             return response()->json([]);
         }

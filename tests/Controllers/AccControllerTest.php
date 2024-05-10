@@ -77,7 +77,7 @@ class AccControllerTest extends TestCase
         $constructor1 = factory(Constructor::class)->create(['game' => 8]);
         $constructor2 = factory(Constructor::class)->create(['game' => 20]);
         $season = factory(Season::class)->create(['constructors' => $constructor1->id . "," . $constructor2->id]);
-        $circuit = factory(Circuit::class)->create(['series' => $season->series, 'game' => 'bhatch']);
+        factory(Circuit::class)->create(['series_id' => $season->series_id, 'game' => 'bhatch']);
 
         $response = $this
                     ->actingAs($this->user)
@@ -108,7 +108,7 @@ class AccControllerTest extends TestCase
 
         $points = factory(Points::class)->create();
         $season = factory(Season::class)->create(['constructors' => $constructor1->id . "," . $constructor2->id]);
-        $circuit = factory(Circuit::class)->create(['series' => $season->series, 'game' => 'bhatch']);
+        $circuit = factory(Circuit::class)->create(['series_id' => $season->series_id, 'game' => 'bhatch']);
 
         $user1 = factory(User::class)->create(['steam_id' => '1111']);
         $driver1 = factory(Driver::class)->create(['user_id' => $user1->id]);

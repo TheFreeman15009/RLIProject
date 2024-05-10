@@ -58,7 +58,7 @@ class DatabaseBackup extends Command
             if ($dumpCommandOutput[$lastNewLine + 1] != DIRECTORY_SEPARATOR) {
                 // DB dump failed
                 $this->error($dumpCommandOutput);
-                return;
+                return 2;
             } else {
                 $this->info($dumpCommandOutput);
             }
@@ -84,5 +84,7 @@ class DatabaseBackup extends Command
 
             return 1;
         }
+
+        return 0;
     }
 }

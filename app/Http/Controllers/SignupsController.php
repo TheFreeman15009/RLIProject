@@ -64,7 +64,7 @@ class SignupsController extends Controller
         $signup = new Signup();
 
         $signup->user_id = Auth::user()->id;
-        $signup->season = $data['seas'];
+        $signup->season_id = $data['seas'];
         $signup->speedtest = $data['speedtest'];
         $statCheck = $data['statusCheck'] - floor($data['statusCheck']);
         $statCheck = round($statCheck, 1);
@@ -121,7 +121,7 @@ class SignupsController extends Controller
                 $signup->carprefrence = $prefrence;
             }
 
-            $signup->season = $data['seas'];
+            $signup->season_id = $data['seas'];
             $signup->speedtest = $data['speedtest'];
             $statCheck = $data['statusCheck'] - floor($data['statusCheck']);
             $statCheck = round($statCheck, 1);
@@ -167,7 +167,7 @@ class SignupsController extends Controller
     {
         $activeSeasons = Season::activeWithSignups()->get();
         $activeSeasonIds = $activeSeasons->pluck('id');
-        $signedUsers = Signup::whereIn('season', $activeSeasonIds)
+        $signedUsers = Signup::whereIn('season_id', $activeSeasonIds)
                       ->orderBy('updated_at', 'desc')->get()
                       ->load('user', 'season')->toArray();
 
@@ -195,19 +195,19 @@ class SignupsController extends Controller
         $seasonIds = $activeSeasons->pluck('id')->toArray();
         $activeSeasons = $activeSeasons->toArray();
 
-        $signups = Signup::whereIn('season', $seasonIds)
-                         ->orderBy('season')
+        $signups = Signup::whereIn('season_id', $seasonIds)
+                         ->orderBy('season_id')
                          ->orderBy('created_at')
                          ->get()
                          ->toArray();
 
-        $res = $this->groupByField('season', 'signups', $activeSeasons, $signups, 'season');
+        $res = $this->groupByField('season', 'signups', $activeSeasons, $signups, 'season_id');
         return response()->json($res);
     }
 
     public function getSignupsBySeasonApi($season_id)
     {
-        $signups = Signup::where('season', $season_id)
+        $signups = Signup::where('season_id', $season_id)
                        ->orderBy('created_at')
                        ->get()
                        ->load('user.driver')

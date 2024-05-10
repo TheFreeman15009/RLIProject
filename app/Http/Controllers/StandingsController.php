@@ -28,9 +28,9 @@ class StandingsController extends Controller
 
     public function fetchRaces($code, $tier, $season)
     {
-        $series = Series::where("code", $code)->firstOrFail();
+        $series = Series::code($code)->firstOrFail();
         $season = Season::where([
-            ['series', $series['id']],
+            ['series_id', $series['id']],
             ['tier', $tier],
             ['season', $season]
         ])->firstOrFail();
@@ -85,7 +85,7 @@ class StandingsController extends Controller
     protected function computeStandings($series, $tier, $season)
     {
         $season = Season::where([
-            ['series', $series],
+            ['series_id', $series],
             ['tier', $tier],
             ['season', $season]
         ])->first();
@@ -114,6 +114,7 @@ class StandingsController extends Controller
         $flaps = array();
         $penalties = array();
         $dres = $this->computePoints($results, 'driver', $psystem);
+
         for ($i = 0; $i < count($dres); $i++) {
             $ind = $this->latestRace($results, $dres[$i]['start'], $dres[$i]['end']);
             $dres[$i]['team'] = $results[$ind]['constructor'];
@@ -154,7 +155,7 @@ class StandingsController extends Controller
 
     public function fetchStandings($code, $tier, $season)
     {
-        $series = Series::where("code", $code)->first();
+        $series = Series::code($code)->first();
         if ($series == null) {
             return abort(404);
         }
@@ -262,7 +263,7 @@ class StandingsController extends Controller
             $points += $driver['points'];
             if ($driver['status'] >= 0) {
                 $rpoints = 0;
-                $ps_ind = array_search($results[$k]['race']['points'], array_column($psystem, "id"));
+                $ps_ind = array_search($results[$k]['race']['points_id'], array_column($psystem, "id"));
                 if (array_key_exists('P' . $pos, $psystem[$ps_ind])) {
                     $rpoints = $psystem[$ps_ind]['P' . $pos];
                 }

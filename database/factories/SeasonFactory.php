@@ -15,7 +15,7 @@ $factory->define(Season::class, function (Faker $faker, $params) {
 
     $ttracks = "";
     $constructors = "";
-    $seriesId = (array_key_exists("series", $params)) ? $params['series'] : factory(Series::class)->create();
+    $seriesId = (array_key_exists('series_id', $params)) ? $params['series_id'] : factory(Series::class)->create();
 
     if (array_key_exists('constructors', $params)) {
         $constructors = $params['constructors'];
@@ -30,15 +30,15 @@ $factory->define(Season::class, function (Faker $faker, $params) {
     if (array_key_exists('ttracks', $params)) {
         $ttracks = $params['ttracks'];
     } else {
-        $tttracks = factory(Circuit::class)->create(['series' => $seriesId])->id . ',';
-        $tttracks .= factory(Circuit::class)->create(['series' => $seriesId])->id . ',';
-        $tttracks .= factory(Circuit::class)->create(['series' => $seriesId])->id;
+        $ttracks = factory(Circuit::class)->create(['series_id' => $seriesId])->id . ',';
+        $ttracks .= factory(Circuit::class)->create(['series_id' => $seriesId])->id . ',';
+        $ttracks .= factory(Circuit::class)->create(['series_id' => $seriesId])->id;
     }
 
     return [
-        'series' => $seriesId,
+        'series_id' => $seriesId,
         'constructors' => $constructors,                        // List of comma separated Constructor IDs
-        'tttracks' => $tttracks,                                // List of 3 Circuit IDs
+        'tttracks' => $ttracks,                                 // List of 3 Circuit IDs
 
         'show' => (int)$faker->boolean,
         'season' => $faker->randomFloat(2),

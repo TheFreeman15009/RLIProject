@@ -182,9 +182,9 @@ class ResultsController extends Controller
 
     public function fetchRaceResults($code, $tier, $season, $round)
     {
-        $series = Series::where("code", $code)->firstOrFail();
+        $series = Series::code($code)->firstOrFail();
         $season = Season::where([
-            ['series', $series['id']],
+            ['series_id', $series['id']],
             ['tier', $tier],
             ['season', $season]
         ])->firstOrFail();
@@ -219,7 +219,7 @@ class ResultsController extends Controller
 
             if ($res['status'] >= 0) {
                 $rpoints = 0;
-                $ps_ind = array_search($results[$i]['race']['points'], array_column($points, "id"));
+                $ps_ind = array_search($results[$i]['race']['points_id'], array_column($points, "id"));
                 if (array_key_exists('P' . $pos, $points[$ps_ind])) {
                     $rpoints = $points[$ps_ind]['P' . $pos];
                 }
@@ -249,7 +249,7 @@ class ResultsController extends Controller
     {
         $season = Season::active()->get()->load('series');
         $points = Points::all();
-        $tracks = Circuit::select('id', 'name', 'series')->get()->load('series');
+        $tracks = Circuit::select('id', 'name', 'series_id')->get()->load('series');
         $constructor = Constructor::select('id', 'name')->get();
         $driver = Driver::select('id', 'name')->get();
 

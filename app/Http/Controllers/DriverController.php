@@ -88,7 +88,7 @@ class DriverController extends StandingsController
             }
 
             // Results for this Season
-            $ts = $this->computeStandings($seasons[$i]['series'], $seasons[$i]['tier'], $seasons[$i]['season']);
+            $ts = $this->computeStandings($seasons[$i]['series_id'], $seasons[$i]['tier'], $seasons[$i]['season']);
             if ($ts['code'] != 200) {
                 continue;
             }
@@ -175,13 +175,13 @@ class DriverController extends StandingsController
 
         $constructor = Constructor::all()->toArray();
 
-        $seasons = Season::select('id', 'game', 'season', 'tier', 'name', 'series', 'constructors', 'tttracks')
+        $seasons = Season::select('id', 'game', 'season', 'tier', 'name', 'series_id', 'constructors', 'tttracks')
                          ->active()->get()->toArray();
 
         // Iterate through all Active Seasons
         for ($i = 0; $i < count($seasons); ++$i) {
             // Results for this Season
-            $ts = $this->computeStandings($seasons[$i]['series'], $seasons[$i]['tier'], $seasons[$i]['season']);
+            $ts = $this->computeStandings($seasons[$i]['series_id'], $seasons[$i]['tier'], $seasons[$i]['season']);
             if ($ts['code'] != 200) {
                 continue;
             }

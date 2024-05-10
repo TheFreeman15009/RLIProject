@@ -18,8 +18,8 @@ class Signup extends Model
         return $this->belongsTo('App\User');
     }
 
-    public function associatedSeason()
+    public function season()
     {
-        return $this->belongsTo('App\Season', 'season');
+        return $this->belongsTo('App\Season');
     }
 }
