@@ -113,11 +113,11 @@
                                         Upload Race Results
                                     </a>
 
-                                    <a href="{{route('coordinator.driverlist')}}" class="py-2 text-black cursor-pointer pr-4 mx-4 rounded-md hover:bg-gray-900 font-medium hover:text-white flex items-center">
+                                    <a href="{{route('acc.parseupload')}}" class="py-2 text-black cursor-pointer pr-4 mx-4 rounded-md hover:bg-gray-900 font-medium hover:text-white flex items-center">
                                         <div class="items-center flex-shrink-0 w-12 text-center">
-                                            <i class="fas fa-sort"></i>
+                                            <i class="fas fa-file"></i>
                                         </div>
-                                        View/Allot Drivers
+                                        Parse ACC Results
                                     </a>
                                     @endcan
 
@@ -129,12 +129,7 @@
                                             Publish Verdicts
                                         </a>
                                     @endcan
-
-                                    @can('steward|coordinator')
-                                    {{-- Enable this route later when we need it otherwise it breaks the site --}}
-                                    {{-- <a href="{{route('steward.list')}}" class="py-2 text-black cursor-pointer pr-4 mx-4 rounded-md hover:bg-gray-900 font-medium hover:text-white flex items-center"><div class="items-center flex-shrink-0 w-12 text-center"><i class="fas fa-exclamation"></i></div>View Reports</a> --}}
-                                    @endcan
-
+                                    
                                     @can('admin|signup')
                                     <a href="{{route('coordinator.signup')}}" class="py-2 text-black cursor-pointer pr-4 mx-4 rounded-md hover:bg-gray-900 font-medium hover:text-white flex items-center">
                                         <div class="items-center flex-shrink-0 w-12 text-center">
@@ -143,6 +138,21 @@
                                         View Sign Ups
                                     </a>
                                     @endcan
+                                    
+                                    @can('admin|coordinator')
+                                    <a href="{{route('coordinator.driverlist')}}" class="py-2 text-black cursor-pointer pr-4 mx-4 rounded-md hover:bg-gray-900 font-medium hover:text-white flex items-center">
+                                        <div class="items-center flex-shrink-0 w-12 text-center">
+                                            <i class="fas fa-sort"></i>
+                                        </div>
+                                        View/Allot Drivers
+                                    </a>
+                                    @endcan
+
+                                    @can('steward|coordinator')
+                                    {{-- Enable this route later when we need it otherwise it breaks the site --}}
+                                    {{-- <a href="{{route('steward.list')}}" class="py-2 text-black cursor-pointer pr-4 mx-4 rounded-md hover:bg-gray-900 font-medium hover:text-white flex items-center"><div class="items-center flex-shrink-0 w-12 text-center"><i class="fas fa-exclamation"></i></div>View Reports</a> --}}
+                                    @endcan
+
                                 </div>
                             @endauth
                         </div>
