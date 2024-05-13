@@ -425,7 +425,13 @@
                                             @foreach($topBarSeasons as $series)
                                                 @foreach($series['tier'] as $tier)
                                                     @foreach($tier as $season)
-                                                        <option class="allSeasonOptions seasonOf_{{$tier[0]['tier']}}_{{str_replace(' ', '_',strtolower($series['name']['website']))}}" data-champLink='/{{$series['name']['code']}}/{{$season['tier']}}/{{$season['season']}}/standings' data-raceLink='/{{$series['name']['code']}}/{{$season['tier']}}/{{$season['season']}}/races'>Season {{floor($season['season'])}}</option>
+                                                        <option 
+                                                            class="allSeasonOptions seasonOf_{{$tier[0]['tier']}}_{{str_replace(' ', '_',strtolower($series['name']['website']))}}"
+                                                            data-champLink="{{route('standings', ['code' => $series['name']['code'], 'tier' => $season['tier'], 'season' => $season['season']])}}" 
+                                                            data-raceLink="{{route('allraces', ['code' => $series['name']['code'], 'tier' => $season['tier'], 'season' => $season['season']])}}"
+                                                        >
+                                                            Season {{floor($season['season'])}}
+                                                        </option>
                                                     @endforeach
                                                 @endforeach
                                             @endforeach

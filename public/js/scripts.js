@@ -99,7 +99,7 @@ $( document ).ready(function() {
             }else{
                 redirectLink = $('.seasonOptions option:selected').attr('data-raceLink');
             }
-            window.location = location.protocol+'//'+window.location.hostname+redirectLink;
+            window.location = redirectLink;
         }else{
             $('#optionError').show();
         }
