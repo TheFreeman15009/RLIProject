@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Traits\Queryable;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -11,12 +12,16 @@ class Constructor extends Model
     use Queryable;
     use LogsActivity;
 
-    protected static $logName = 'constructor';  // Name for the log
-    protected static $logAttributes = ['*'];    // Log All fields in the table
-    protected static $logOnlyDirty = true;      // Only log the fields that have been updated
-
     protected static $filterableFields = ['series_id', 'title', 'game', 'id', 'name'];
     protected static $prohibitedFields = [];    // For Index API
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                         ->logAll()
+                         ->logOnlyDirty()
+                         ->useLogName('constructor');
+    }
 
     public static function getTeams()
     {

@@ -2,16 +2,13 @@
 
 namespace App;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Race extends Model
 {
     use LogsActivity;
-
-    protected static $logName = 'race';         // Name for the log
-    protected static $logAttributes = ['*'];    // Log All fields in the table
-    protected static $logOnlyDirty = true;      // Only log the fields that have been updated
 
     public function insertRace()
     {
@@ -33,6 +30,14 @@ class Race extends Model
     protected $fillable = [
         'circuit_id', 'season_id', 'round', 'distance', 'points_id'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                         ->logAll()
+                         ->logOnlyDirty()
+                         ->useLogName('race');
+    }
 
     public function season()
     {

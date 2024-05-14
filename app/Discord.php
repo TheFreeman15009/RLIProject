@@ -11,21 +11,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Discord
 {
-    use LogsActivity;
-
-    protected static $logName = 'discord';      // Name for the log
-    protected static $logAttributes = ['*'];    // Log All fields in the table
-    protected static $logOnlyDirty = true;      // Only log the fields that have been updated
-
     protected $irc_guild;
     protected $applicantRole;
     protected $profilesChannel;
+    protected $notificationChannel;
+
     public function __construct()
     {
         $this->irc_guild = (int)config('services.discord.irc_guild');
         $this->applicantRole = (int)config('services.discord.applicant_role');
         $this->profilesChannel = (int)config('services.discord.profiles_channel');
-        $this->notificationchannel = (int)config('services.discord.notification_channel');
+        $this->notificationChannel = (int)config('services.discord.notification_channel');
     }
 
     public function check($userr)
@@ -372,7 +368,7 @@ class Discord
         $params = (['token' => config('services.discord.bot')]);
         $curl = curl_init();
 
-        $esports = $this->notificationchannel;
+        $esports = $this->notificationChannel;
 
         curl_setopt_array($curl, array(
            CURLOPT_URL => "https://discord.com/api/channels/" . $esports . "/messages",

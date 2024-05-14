@@ -1,18 +1,15 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Console\Commands;
 
 use Mockery;
 use Tests\TestCase;
 use App\Actions\LocalDbDump;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Config;
 
 class DatabaseBackupTest extends TestCase
 {
-    // use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,7 +35,7 @@ class DatabaseBackupTest extends TestCase
 
     public function testInvalidCredentialsFile()
     {
-        $file = storage_path('google_drive_fake_credentials.json');
+        $file = storage_path('backups' . DIRECTORY_SEPARATOR . 'google_drive_fake_credentials.json');
         $fileHandler = fopen($file, "w");
         fwrite($fileHandler, "{\"type\": \"service_account\"}");
         fclose($fileHandler);
@@ -63,20 +60,21 @@ class DatabaseBackupTest extends TestCase
         $localDbDumpMock = $this->getMockBuilder(LocalDbDump::class)
                                   ->onlyMethods([ 'createDump' ])
                                   ->getMock();
-        $localDbDumpMock->method('createDump')->willReturn([ 75, 0, '/tmp/gdrive_backup.sql.gz' ]);
+        $fileName = 'tmp' . DIRECTORY_SEPARATOR . 'gdrive_backup.sql.gz';
+        $localDbDumpMock->method('createDump')->willReturn([ 75, 0, DIRECTORY_SEPARATOR . $fileName ]);
         $this->app->bind(LocalDbDump::class, function () use ($localDbDumpMock) {
             return $localDbDumpMock;
         });
 
         $this->artisan('db:backup')
-             ->expectsOutput('Error in backing up DB. Error message: File not found at path: tmp/gdrive_backup.sql.gz')
+             ->expectsOutput('Error in backing up DB. Error message: Unable to read file from location: ' . $fileName . '.')
              ->assertExitCode(1);
     }
 
     public function testWriteToCloud()
     {
         $fileName = 'google_drive_test_' . date('Y-m-d--H_i_s') . '.txt';
-        $filePath = storage_path($fileName);
+        $filePath = storage_path('backups' . DIRECTORY_SEPARATOR . $fileName);
         $fileHandler = fopen($filePath, "w");
         fwrite($fileHandler, "File created at " . date('Y-m-d_H:i'));
         fclose($fileHandler);
@@ -108,7 +106,7 @@ class DatabaseBackupTest extends TestCase
     protected function mockStorageDisk($disk = 'mock')
     {
         Storage::extend('mock', function () {
-            return \Mockery::mock(\Illuminate\Contracts\Filesystem\Filesystem::class);
+            return \Mockery::mock(\Illuminate\Filesystem\FilesystemAdapter::class);
         });
 
         Config::set('filesystems.disks.' . $disk, ['driver' => 'mock']);

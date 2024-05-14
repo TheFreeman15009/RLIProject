@@ -28,7 +28,7 @@ class GoogleDriveServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Storage::extend("google", function ($app, $config) {
+        Storage::extend('google', function ($app, $config) {
             $credentials_file = $config['clientSecret'];
 
             $client = new Client();
@@ -37,9 +37,9 @@ class GoogleDriveServiceProvider extends ServiceProvider
 
             $service = new Drive($client);
             $adapter = new GoogleDriveAdapter($service, $config['rootFolder']);
-            $driver = new Filesystem($adapter);
+            $driver = new Filesystem($adapter, $config);
 
-            return new FilesystemAdapter($driver, $adapter);
+            return new FilesystemAdapter($driver, $adapter, $config);
         });
     }
 }

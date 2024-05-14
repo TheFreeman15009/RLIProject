@@ -2,10 +2,10 @@
 
 namespace App;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -49,6 +49,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                         ->logAll()
+                         ->logOnlyDirty()
+                         ->useLogName('user')
+                         ->logExcept([ 'password', 'remember_token', 'api_token' ]);
+    }
 
     public function driver()
     {

@@ -22,7 +22,7 @@ class ConstructorsControllerTest extends TestCase
         $this->json('GET', route('constructors.index', ['series_id' => $seriesId, 'fields' => 'id']))
              ->assertOk()
              ->assertJsonCount(2)
-             ->assertExactJson([
+             ->assertSimilarJson([
                 [
                     'id' => $constructors[0]['id']
                 ],

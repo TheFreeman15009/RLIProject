@@ -2,16 +2,13 @@
 
 namespace App;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Season extends Model
 {
     use LogsActivity;
-
-    protected static $logName = 'season';  // Name for the log
-    protected static $logAttributes = ['*']; // Log All fields in the table
-    protected static $logOnlyDirty = true; // Only log the fields that have been updated
 
     private const CDELIM = ',';
     public static function fetch()
@@ -23,6 +20,14 @@ class Season extends Model
     protected $fillable = [
         'game', 'season', 'tier', 'year'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                         ->logAll()
+                         ->logOnlyDirty()
+                         ->useLogName('season');
+    }
 
     public function series()
     {

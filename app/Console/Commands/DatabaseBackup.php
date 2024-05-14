@@ -64,7 +64,7 @@ class DatabaseBackup extends Command
             }
 
             $backupLocation = substr($dumpCommandOutput, $lastNewLine + 1);
-            $localAdapter = new \League\Flysystem\Adapter\Local(DIRECTORY_SEPARATOR);
+            $localAdapter = new \League\Flysystem\Local\LocalFilesystemAdapter(DIRECTORY_SEPARATOR);
             $localfs = new \League\Flysystem\Filesystem($localAdapter);
 
             // Assuming there are no / in the name of the file

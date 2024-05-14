@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
 use App\Helpers\FilesystemHelpers as FH;
 
-class DatabaseDump extends TestCase
+class DatabaseDumpTest extends TestCase
 {
     public function testAccessDeniedException()
     {

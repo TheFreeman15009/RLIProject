@@ -5,7 +5,7 @@ RUN apt-get update -y && apt-get install -y git curl unzip libxslt-dev \
 
 RUN docker-php-ext-install pdo_mysql bcmath xsl
 RUN docker-php-ext-install calendar exif ffi gd
-RUN docker-php-ext-install gettext gmp pcntl zend_test
+RUN docker-php-ext-install gettext gmp pcntl
 RUN docker-php-ext-install shmop sockets sysvmsg sysvsem sysvshm zip
 
 ARG PROJECT_DIR

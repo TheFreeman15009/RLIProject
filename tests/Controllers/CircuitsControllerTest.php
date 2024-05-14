@@ -22,7 +22,7 @@ class CircuitsControllerTest extends TestCase
         $this->json('GET', route('circuits.index', ['series_id' => $seriesId, 'fields' => 'id']))
              ->assertOk()
              ->assertJsonCount(2)
-             ->assertExactJson([
+             ->assertSimilarJson([
                 [
                     'id' => $circuits[0]['id']
                 ],

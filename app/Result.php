@@ -2,16 +2,13 @@
 
 namespace App;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Result extends Model
 {
     use LogsActivity;
-
-    protected static $logName = 'result';       // Name for the log
-    protected static $logAttributes = ['*'];    // Log All fields in the table
-    protected static $logOnlyDirty = true;      // Only log the fields that have been updated
 
     public function storeResult()
     {
@@ -35,6 +32,14 @@ class Result extends Model
         'fastestlaptime', 'position', 'tyres',
         'stops', 'time'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                         ->logAll()
+                         ->logOnlyDirty()
+                         ->useLogName('result');
+    }
 
     public function race()
     {

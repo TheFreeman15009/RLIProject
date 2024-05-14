@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,6 +48,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => true
         ],
 
         'public' => [
@@ -55,6 +56,7 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
+            'throw' => true
         ],
 
         's3' => [
@@ -64,6 +66,7 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'throw' => true
         ],
 
         'google' => [
@@ -71,7 +74,8 @@ return [
             'clientSecret' => env("GOOGLE_CLIENT_SECRET"),
             'rootFolder' => FH::noTrailSlash(env("GOOGLE_DRIVE_ROOT_FOLDER")),
             'dbBackupsFolder' => FH::noTrailSlash(env("GOOGLE_DRIVE_DB_BACKUPS_FOLDER")),
-            'signupsFolder' => FH::noTrailSlash(env("GOOGLE_DRIVE_SIGNUPS_FOLDER"))
+            'signupsFolder' => FH::noTrailSlash(env("GOOGLE_DRIVE_SIGNUPS_FOLDER")),
+            'throw' => true
         ],
     ],
 

@@ -30,7 +30,8 @@
 		"cssho.vscode-svgviewer",
 		"pomdtr.excalidraw-editor",
 		"vivaxy.vscode-conventional-commits",
-		"GitHub.vscode-github-actions"
+		"GitHub.vscode-github-actions",
+		"faissaloux.package-manager-intellisense"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
